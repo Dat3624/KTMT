@@ -4,6 +4,7 @@ var lopHPAPI = 'http://localhost:8081/dangkyhocphan/lophocphan';
 var detailAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/chitietlophocphan';
 var lopHPDaDangKyAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/sinhvien';
 var registerAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/sinhvien/dangky';
+var cancelAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/sinhvien/huydangky'
 
 // lấy thông tin sinh viên từ localStorage
 var studentID = localStorage.getItem("studentID");
@@ -187,7 +188,6 @@ document.getElementById('thuchanh').addEventListener('change', function() {
 function register() {
     var activeCourse = document.querySelector('#tb-course tr.active');
     var activeClass = document.querySelector('#tb-class tr.active');
-    var activeDetail = document.querySelector('#tb-detail tr.active');
     var tableDetail = document.querySelector('#tb-detail'); 
     
     if (!activeCourse) {
@@ -241,25 +241,36 @@ function register() {
         body: JSON.stringify(enrollment)
     })
         .then((res) => {
+            console.log(res.text());
             return res.text();
         })
         .then((response) => {
-            // window.location.reload();
             loadListOfRegisteredClass();
+            loadListOfCourse();
+            var table = document.querySelector('#tb-detail');
+            var tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            var table = document.querySelector('#tb-class');
+            var tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            alert('Đăng ký học phần thành công');
         })
 }
 
+var dsHPDaDangKy = [];
 // load danh sách lớp học phần đã đăng ký
 function loadListOfRegisteredClass() {
     studentID = document.getElementById('sv-mssv').textContent;
     year = new Date().getFullYear();
     semester = document.getElementById('semester').value.slice(2, 3);
     console.log(lopHPDaDangKyAPI + '?studentID=' + studentID + '&semester=' + semester + '&year=' + year);
+
     fetch(lopHPDaDangKyAPI + '?studentID=' + studentID + '&semester=' + semester + '&year=' + year)
     .then(function(response) {
         return response.json();
     })
     .then(function(registers) {
+        dsHPDaDangKy = registers;
         var table = document.querySelector('#tb-register');
         var tbody = table.querySelector('tbody');
 
@@ -267,7 +278,13 @@ function loadListOfRegisteredClass() {
         
         registers.forEach((register, index) => {
             const row = tbody.insertRow();
-            row.insertCell(0).textContent = "";
+
+            const buttonCell = row.insertCell(0);
+            const button = document.createElement('button');
+            button.textContent = 'Xem';
+            button.onclick = () => handleButtonClick(register.enrollmentID, index);
+            buttonCell.appendChild(button);
+            
             row.insertCell(1).textContent = index + 1;
             row.insertCell(2).textContent = register.enrollmentID;
             row.insertCell(3).textContent = register.nameCourse;
@@ -288,3 +305,86 @@ function loadListOfRegisteredClass() {
 }
 
 loadListOfRegisteredClass();
+
+var currentEnrollmentID;
+// xử lý button xem chi tiết
+function handleButtonClick(enrollmentID, index) {
+    currentEnrollmentID = enrollmentID;
+    fetch(detailAPI + '?enrollmentID=' + enrollmentID)
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(detail) {
+        var modalBodyTable = document.querySelector('#tb-detail-register tbody');
+        modalBodyTable.innerHTML = '';
+        
+        for (var i = 0; i < detail.scheduleStudy.length; i++) {
+            const row = modalBodyTable.insertRow();
+            row.insertCell(0).textContent = 'LT - Thứ ' + detail.scheduleStudy[i].dayOfWeek + ' (T' + detail.scheduleStudy[i].classesStart + ' - T' + detail.scheduleStudy[i].classesEnd + ')';
+            row.insertCell(1).textContent = "";
+            row.insertCell(2).textContent = detail.roomName;
+            row.insertCell(3).textContent = detail.nameInstuctor;
+            row.insertCell(4).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
+        }
+
+        var tableRegister = document.querySelector('#tb-register tbody').rows[index];
+        var name = tableRegister.cells[6].textContent;
+        for (var i = 0; i < detail.enrollmentPs.length; i++) {
+            if (detail.enrollmentPs[i].name.slice(5) === name) {
+                const row = modalBodyTable.insertRow();
+                row.insertCell(0).textContent = 'TH - Thứ ' + detail.enrollmentPs[i].scheduleStudy.dayOfWeek + ' (T' + detail.enrollmentPs[i].scheduleStudy.classesStart + ' - T' + detail.enrollmentPs[i].scheduleStudy.classesEnd + ')';
+                row.insertCell(1).textContent = detail.enrollmentPs[i].name;
+                row.insertCell(2).textContent = detail.enrollmentPs[i].room;
+                row.insertCell(3).textContent = detail.enrollmentPs[i].nameInstructor;
+                row.insertCell(4).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
+            }
+        }
+        
+        var cancelButton = document.querySelector('#btn-huy');
+        cancelButton.addEventListener('click', function() {
+            cancelLHP(currentEnrollmentID);
+            console.log('Hủy học phần');
+        });
+        $('#myModal').modal('show');
+    })
+}
+
+// hủy học phần
+function cancelLHP(currentEnrollmentID) {
+    console.log(currentEnrollmentID);
+    var codePractive = '';
+    dsHPDaDangKy.forEach((item, i) => {
+        if (item.enrollmentID === currentEnrollmentID) {
+            codePractive = item.codePractice;
+        }
+    });
+    
+    var enrollment = {
+        "studentID": studentID,
+        "enrollmentID": currentEnrollmentID,
+        "codePractive": codePractive,
+    }
+    console.log(enrollment);
+    fetch(cancelAPI, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(enrollment)
+    })
+        .then((res) => {
+            return res.text();
+        })
+        .then((response) => {
+            alert('Hủy đăng ký thành công');
+            $('#myModal').modal('hide');
+            loadListOfRegisteredClass();
+            loadListOfCourse();
+            var table = document.querySelector('#tb-detail');
+            var tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            var table = document.querySelector('#tb-class');
+            var tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+        })
+}

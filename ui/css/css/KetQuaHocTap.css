@@ -248,7 +248,6 @@
     }
 
 .table-custom .no-check {
-    background-image: url('../img/icons/ico-delete-min.png');
     background-repeat: no-repeat;
     width: 16px;
     height: 16px;
@@ -257,7 +256,6 @@
 }
 
 .table-custom .check {
-    background-image: url('../img/icons/ico-select-min.png');
     background-repeat: no-repeat;
     width: 16px;
     height: 16px;
