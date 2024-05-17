@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface CourseService {
     List<Course> getAllCourses();
-    List<CourseDTO> getAllCoursesOfMajorInSemester(String majorID, int semester, int year);
+    List<CourseDTO> getAllCoursesOfMajorInSemester(String StudentID, int semester, int year);
     List<Course> getPerquisites(String courseID);
+    List<CourseDTO> getAllCourseByMajor(String majorID);
+
+    String addCourse(CourseDTO courseDTO);
+    public boolean updatePrerequisites(String courseID, String prerequisitesID);
 }

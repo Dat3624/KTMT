@@ -33,8 +33,6 @@ public class Major {
                 "majorID='" + majorID + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-
-
                 '}';
     }
 }

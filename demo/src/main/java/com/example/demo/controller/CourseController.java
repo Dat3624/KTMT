@@ -4,9 +4,7 @@ import com.example.demo.dto.CourseDTO;
 import com.example.demo.services.CourseService;
 import com.example.demo.services.impl.CourseImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,5 +19,18 @@ public class CourseController {
 
         List<CourseDTO> courseDTOS = courseImpl.getAllCoursesOfMajorInSemester(studentID, semester, year);
         return courseDTOS;
+    }
+@GetMapping("/admin/monhoc")
+    public List<CourseDTO> getAllCourse(@RequestParam("majorID") String majorID){
+        return courseImpl.getAllCourseByMajor(majorID);
+    }
+
+@PostMapping("/admin/monhoc")
+    public String addCourse(@RequestBody CourseDTO courseDTO){
+        String result = courseImpl.addCourse(courseDTO);
+        if(!courseDTO.getPrerequisites().isEmpty()){
+            courseImpl.updatePrerequisites(courseDTO.getCourseID(), courseDTO.getPrerequisites());
+        }
+        return result;
     }
 }

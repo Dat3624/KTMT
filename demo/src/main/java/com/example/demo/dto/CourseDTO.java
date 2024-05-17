@@ -14,6 +14,5 @@ public class CourseDTO {
     private int credits;
     private String type;
     private String prerequisites;
-
-
+    private String majorsID;
 }

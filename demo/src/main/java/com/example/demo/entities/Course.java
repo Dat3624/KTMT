@@ -23,7 +23,7 @@ public class Course {
     @Column(name = "type", columnDefinition = "nvarchar(50)")
     private String type;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "courseAFID")
     private Course courseAfter;
 
@@ -43,7 +43,6 @@ public class Course {
                 ", credits=" + credits +
                 ", type='" + type + '\'' +
                 ", courseAfter=" + courseAfter +
-
                 '}';
     }
 }
