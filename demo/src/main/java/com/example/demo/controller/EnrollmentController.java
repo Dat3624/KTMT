@@ -39,4 +39,8 @@ public class EnrollmentController {
     public String cancelEnrollment(@RequestBody Student_EnrollmentDTO studentEnrollmentDTO) {
         return student_enrollmentImpl.cancelEnrollment(studentEnrollmentDTO);
     }
+    @GetMapping("/admin/monhoc/lophocphan")
+    public List<EnrollmentDTO> getAllEnrollmentByCourseIDInSemesterAndYear(@RequestParam("courseID") String courseID, @RequestParam("semester") int semester, @RequestParam("year") int year){
+        return enrollmentService.getAllEnrollmentByCourseIDInSemesterAndYear(courseID, semester, year);
+    }
 }

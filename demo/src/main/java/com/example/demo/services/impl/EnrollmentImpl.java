@@ -64,6 +64,17 @@ public class EnrollmentImpl implements EnrollmentService {
     }
 
     @Override
+    public List<EnrollmentDTO> getAllEnrollmentByCourseIDInSemesterAndYear(String courseID, int semester, int year) {
+        return enrollmentRepository.findEnrollmentsByCourse_CourseIDAndSemesterAndYear(courseID,semester,year).stream().map((element)->{
+            String nameInstructor = element.getInstuctor().getName();
+            int quantityApply = element.getStudentEnrollments().size();
+            EnrollmentDTO enrollmentDTO = modelMapper.map(element, EnrollmentDTO.class);
+            enrollmentDTO.setQuantityApply(quantityApply);
+            return enrollmentDTO;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
     public EnrollmentDTO getAllEnrollmentById(String enrollmentID) {
         Enrollment enrollment = enrollmentRepository.findEnrollmentByEnrollmentID(enrollmentID);
         assert enrollment != null;

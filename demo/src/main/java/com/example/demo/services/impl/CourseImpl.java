@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -119,7 +120,7 @@ public class CourseImpl implements CourseService {
         if (majorRepository.findById(courseDTO.getMajorsID()).orElse(null)==null){
             return "Major not found";
         }
-        if (courseDTO.getPrerequisites()!=null && courseRepository.findById(courseDTO.getPrerequisites()).orElse(null)==null){
+        if (!Objects.equals(courseDTO.getPrerequisites(), "") && courseRepository.findById(courseDTO.getPrerequisites()).orElse(null)==null){
             return "Prerequisites not found";
         }
         if (courseDTO.getCredits()<0){
