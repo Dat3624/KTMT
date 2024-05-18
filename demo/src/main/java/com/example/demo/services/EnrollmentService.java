@@ -15,4 +15,5 @@ String addEnrollment(EnrollmentDTO enrollmentDTO);
 String getEnrollmentID(String courseID);
 String getEnrollmentName(String majorID);
 String transferEnrollmentStatus(String enrollmentID, EnrollmentStatus status);
+String deleteEnrollment(EnrollmentDTO enrollmentDTO);
 }

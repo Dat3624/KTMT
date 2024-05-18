@@ -72,4 +72,10 @@ public class EnrollmentController {
         result.put("result", enrollmentService.transferEnrollmentStatus(enrollmentDTO.getEnrollmentID(), enrollmentDTO.getStatus()));
         return result;
     }
+    @PostMapping("/admin/monhoc/lophocphan/xoalophocphan")
+    public Map<String,Object> deleteEnrollment(@RequestBody EnrollmentDTO enrollmentDTO){
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", enrollmentService.deleteEnrollment(enrollmentDTO));
+        return result;
+    }
 }

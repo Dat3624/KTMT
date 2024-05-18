@@ -34,7 +34,7 @@ public class EnrollmentImpl implements EnrollmentService {
     @Autowired
     private ScheduleService scheduleImpl;
     @Autowired
-    private ScheduleRepository scheduleRepositor;
+    private ScheduleRepository scheduleRepository;
 
     @Override
     public List<EnrollmentDTO> getAllEnrollmentByCourseID(String courseID) {
@@ -157,7 +157,8 @@ public class EnrollmentImpl implements EnrollmentService {
         enrollment.setInstuctor(instructor);
         List<Student_Enrollment> student_enrollments = new ArrayList<>();
         enrollment.setStudentEnrollments(student_enrollments);
-        Schedule exam = scheduleRepositor.findById(9).orElse(null);
+        // lịch rỗng để khi kiểm tra thì thay đổi lịch
+        Schedule exam = scheduleRepository.findById(1).orElse(null);
         enrollment.setExam(exam);
         enrollmentRepository.save(enrollment);
         System.out.println(enrollment.getEnrollmentPs());
@@ -186,6 +187,19 @@ public class EnrollmentImpl implements EnrollmentService {
         enrollment.setStatus(status);
         enrollmentRepository.save(enrollment);
         return "Transfer status success";
+    }
+
+    @Override
+    public String deleteEnrollment(EnrollmentDTO enrollmentDTO) {
+        Enrollment enrollment = enrollmentRepository.findEnrollmentByEnrollmentID(enrollmentDTO.getEnrollmentID());
+        if (enrollment == null){
+            return "Enrollment is not exist";
+        }
+        Schedule examDelete = new Schedule();
+        scheduleRepository.save(examDelete);
+        enrollment.setExam(examDelete);
+        enrollmentRepository.delete(enrollment);
+        return "Delete enrollment success";
     }
 
 
