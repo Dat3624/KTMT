@@ -6,7 +6,9 @@ import com.example.demo.services.impl.CourseImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CourseController {
@@ -26,15 +28,19 @@ public class CourseController {
     }
 
 @PostMapping("/admin/monhoc")
-    public String addCourse(@RequestBody CourseDTO courseDTO){
+    public Map<String,Object> addCourse(@RequestBody CourseDTO courseDTO){
         String result = courseImpl.addCourse(courseDTO);
         if(!courseDTO.getPrerequisites().isEmpty()){
             courseImpl.updatePrerequisites(courseDTO.getCourseID(), courseDTO.getPrerequisites());
         }
-        return result;
+        Map<String, Object> map = new HashMap<>();
+        map.put("result", result);
+        return map;
     }
     @GetMapping("/admin/monhoc/lophocphan/mamonhoc")
-    public String getCourseID(){
-        return courseImpl.getAllCourses().size() + 1 + "";
+    public Map<String,Object> getCourseID(){
+        Map<String, Object> result = new HashMap<>();
+        result.put("courseID", "C"+courseImpl.getAllCourses().size() + 1);
+        return result;
     }
 }

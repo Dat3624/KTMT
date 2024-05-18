@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController()
 public class EnrollmentController {
@@ -27,9 +29,8 @@ public class EnrollmentController {
     }
 
     @PostMapping("/dangkyhocphan/lophocphan/sinhvien/dangky")
-    public String registerEnrollment(@RequestBody Student_EnrollmentDTO studentEnrollmentDTO) {
-        return student_enrollmentImpl.registerEnrollment(studentEnrollmentDTO);
-
+    public Map<String,Object> registerEnrollment(@RequestBody Student_EnrollmentDTO studentEnrollmentDTO) {
+        return (Map<String, Object>) new HashMap<>().put("result",student_enrollmentImpl.registerEnrollment(studentEnrollmentDTO));
     }
     @GetMapping("/dangkyhocphan/lophocphan/chitietlophocphan")
     public EnrollmentDTO getAllEnrollmentById(@RequestParam("enrollmentID") String enrollmentID){
@@ -44,15 +45,15 @@ public class EnrollmentController {
         return enrollmentService.getAllEnrollmentByCourseIDInSemesterAndYear(courseID, semester, year);
     }
     @PostMapping("/admin/monhoc/themlophocphan")
-    public String addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO){
-        return enrollmentService.addEnrollment(enrollmentDTO);
+    public Map<String,Object> addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO){
+        return (Map<String, Object>) new HashMap<>().put("result",enrollmentService.addEnrollment(enrollmentDTO));
     }
     @GetMapping("/admin/monhoc/lophocphan/malophocphan")
-    public String getEnrollmentID(@RequestParam("courseID") String courseID){
-        return enrollmentService.getEnrollmentID(courseID);
+    public Map<String,Object> getEnrollmentID(@RequestParam("courseID") String courseID){
+        return (Map<String, Object>) new HashMap<>().put("result",enrollmentService.getEnrollmentID(courseID));
     }
     @GetMapping("/admin/monhoc/lophocphan/tenlophocphan")
-    public String getEnrollmentName(@RequestParam("majorID") String majorID){
-        return enrollmentService.getEnrollmentName(majorID);
+    public Map<String,Object> getEnrollmentName(@RequestParam("majorID") String majorID){
+        return (Map<String, Object>) new HashMap<>().put("result",enrollmentService.getEnrollmentName(majorID));
     }
 }
