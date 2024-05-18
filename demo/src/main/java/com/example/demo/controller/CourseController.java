@@ -40,7 +40,7 @@ public class CourseController {
     @GetMapping("/admin/monhoc/lophocphan/mamonhoc")
     public Map<String,Object> getCourseID(){
         Map<String, Object> result = new HashMap<>();
-        result.put("result", "C"+courseImpl.getAllCourses().size() + 1);
+        result.put("result", "C"+(courseImpl.getAllCourses().size() + 1));
         return result;
     }
 }

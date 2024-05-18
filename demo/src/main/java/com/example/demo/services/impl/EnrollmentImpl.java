@@ -1,10 +1,8 @@
 package com.example.demo.services.impl;
 
 import com.example.demo.dto.EnrollmentDTO;
-import com.example.demo.entities.Course;
-import com.example.demo.entities.Enrollment;
-import com.example.demo.entities.Instructor;
-import com.example.demo.entities.Student_Enrollment;
+import com.example.demo.dto.ScheduleDTO;
+import com.example.demo.entities.*;
 import com.example.demo.model.Caculator;
 import com.example.demo.repositories.*;
 import com.example.demo.services.EnrollmentService;
@@ -82,6 +80,7 @@ public class EnrollmentImpl implements EnrollmentService {
             int quantityApply = element.getStudentEnrollments().size();
             EnrollmentDTO enrollmentDTO = modelMapper.map(element, EnrollmentDTO.class);
             enrollmentDTO.setQuantityApply(quantityApply);
+            enrollmentDTO.setNameInstuctor(nameInstructor);
             return enrollmentDTO;
         }).collect(Collectors.toList());
     }
@@ -124,12 +123,7 @@ public class EnrollmentImpl implements EnrollmentService {
             return "Instructor is not exist";
         }
         AtomicBoolean check = new AtomicBoolean(false);
-        enrollmentDTO.getScheduleStudy().forEach((element)->{
-            if (scheduleImpl.checkScheduleByRoomName(enrollmentDTO.getRoomName(),element)){
-                check.set(true);
-                return;
-            }
-        });
+        enrollmentDTO.getScheduleStudy().stream().map((element) -> modelMapper.map(element, Schedule.class)).collect(Collectors.toList());
         enrollmentDTO.getEnrollmentPs().forEach((element)->{
                 if (scheduleImpl.checkScheduleByRoomName(enrollmentDTO.getRoomName(),element.getScheduleStudy())){
                     check.set(true);

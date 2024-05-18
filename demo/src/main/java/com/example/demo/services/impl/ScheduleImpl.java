@@ -79,12 +79,19 @@ public class ScheduleImpl implements ScheduleService {
         AtomicBoolean check = new AtomicBoolean(false);
         scheduleRepository.findAll().forEach((element)->{
                 if(!checkSchedule(element,schedule)){
-                    if(enrollmentRepository.findEnrollmentByEnrollmentID(element.getEnrollment().getEnrollmentID()).getRoomName().equals(roomName)) {
-                        check.set(true);
-                    }
-                }
-        });
+                    enrollmentRepository.findAll().forEach((enrollment)->{
+                        enrollment.getScheduleStudy().forEach((schedule1)->{
+                            if(schedule1.getScheduleID() == element.getScheduleID()){
+                                if(enrollment.getRoomName().equals(roomName)){
+                                    check.set(true);
+                                }
+                            }
 
+                    });
+                });
+        }
+    });
         return check.get();
-    }
+
+}
 }

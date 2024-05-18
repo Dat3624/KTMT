@@ -30,7 +30,9 @@ public class EnrollmentController {
 
     @PostMapping("/dangkyhocphan/lophocphan/sinhvien/dangky")
     public Map<String,Object> registerEnrollment(@RequestBody Student_EnrollmentDTO studentEnrollmentDTO) {
-        return (Map<String, Object>) new HashMap<>().put("result",student_enrollmentImpl.registerEnrollment(studentEnrollmentDTO));
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", student_enrollmentImpl.registerEnrollment(studentEnrollmentDTO));
+        return result;
     }
     @GetMapping("/dangkyhocphan/lophocphan/chitietlophocphan")
     public EnrollmentDTO getAllEnrollmentById(@RequestParam("enrollmentID") String enrollmentID){

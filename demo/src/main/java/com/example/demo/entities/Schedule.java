@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
 @Table(name = "schedules")
 public class Schedule {
     @Id
@@ -15,7 +13,6 @@ public class Schedule {
     private int scheduleID;
 
     private String dayOfWeek;
-
     private int classesStart;
 
     private int classesEnd;
@@ -30,6 +27,38 @@ public class Schedule {
 
     @OneToOne(mappedBy = "exam", fetch = FetchType.EAGER)
     private Enrollment enrollmentExam;
+
+    public int getScheduleID() {
+        return scheduleID;
+    }
+
+    public void setScheduleID(int scheduleID) {
+        this.scheduleID = scheduleID;
+    }
+
+    public String getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(String dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    public int getClassesStart() {
+        return classesStart;
+    }
+
+    public void setClassesStart(int classesStart) {
+        this.classesStart = classesStart;
+    }
+
+    public int getClassesEnd() {
+        return classesEnd;
+    }
+
+    public void setClassesEnd(int classesEnd) {
+        this.classesEnd = classesEnd;
+    }
 
     public Schedule() {
     }
