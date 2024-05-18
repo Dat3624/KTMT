@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class InstructorDTO {
-    private String instructorID;
+    private String id;
     private String name;
 }

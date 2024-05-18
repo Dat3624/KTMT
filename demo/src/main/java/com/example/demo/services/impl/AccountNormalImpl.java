@@ -27,7 +27,9 @@ public class AccountNormalImpl implements AccountNormalService {
     @Override
     public AccountNormalDTO getAccountNormalById(String accountNormalID) {
         AccountNormal accountNormal = accountNormalRepository.findById(accountNormalID).orElse(null);
-        assert accountNormal != null;
+        if (accountNormal == null) {
+            return null;
+        }
         AccountNormalDTO accountNormalDTO = modelMapper.map(accountNormal, AccountNormalDTO.class);
         return accountNormalDTO;
     }
