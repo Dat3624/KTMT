@@ -17,7 +17,6 @@ public class Enrollment {
     @Id
     @Column(name = "enrollmentID", nullable = false)
     private String enrollmentID;
-
     @Column(name = "name",columnDefinition = "nvarchar(50)",nullable = false)
     private String name;
     @Column(name = "year",columnDefinition = "int",nullable = false)

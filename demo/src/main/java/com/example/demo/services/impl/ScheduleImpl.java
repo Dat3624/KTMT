@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Service
 public class ScheduleImpl implements ScheduleService {
     @Autowired
@@ -70,5 +72,19 @@ public class ScheduleImpl implements ScheduleService {
             scheduleEnrollmentDTO.setSchedules(scheduleDTOS);
             return scheduleEnrollmentDTO;
         }).toList();
+    }
+
+    @Override
+    public boolean checkScheduleByRoomName(String roomName, Schedule schedule) {
+        AtomicBoolean check = new AtomicBoolean(false);
+        scheduleRepository.findAll().forEach((element)->{
+                if(!checkSchedule(element,schedule)){
+                    if(enrollmentRepository.findEnrollmentByEnrollmentID(element.getEnrollment().getEnrollmentID()).getRoomName().equals(roomName)) {
+                        check.set(true);
+                    }
+                }
+        });
+
+        return check.get();
     }
 }

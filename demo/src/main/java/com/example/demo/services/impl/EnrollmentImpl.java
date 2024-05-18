@@ -1,17 +1,22 @@
 package com.example.demo.services.impl;
 
 import com.example.demo.dto.EnrollmentDTO;
+import com.example.demo.entities.Course;
 import com.example.demo.entities.Enrollment;
+import com.example.demo.entities.Instructor;
+import com.example.demo.entities.Student_Enrollment;
 import com.example.demo.model.Caculator;
-import com.example.demo.repositories.EnrollmentRepository;
-import com.example.demo.repositories.StudentRepository;
-import com.example.demo.repositories.Student_EnrollmentRepository;
+import com.example.demo.repositories.*;
 import com.example.demo.services.EnrollmentService;
+import com.example.demo.services.ScheduleService;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -25,6 +30,13 @@ public class EnrollmentImpl implements EnrollmentService {
     private Student_EnrollmentRepository student_enrollmentRepository;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private CourseRepository courseRepository;
+    @Autowired
+    private InstructorRepository instructorRepository;
+    @Autowired
+    private ScheduleService scheduleImpl;
+
     @Override
     public List<EnrollmentDTO> getAllEnrollmentByCourseID(String courseID) {
         if(!enrollmentRepository.findEnrollmentsByCourse_CourseID(courseID).isEmpty()){
@@ -74,6 +86,8 @@ public class EnrollmentImpl implements EnrollmentService {
         }).collect(Collectors.toList());
     }
 
+
+
     @Override
     public EnrollmentDTO getAllEnrollmentById(String enrollmentID) {
         Enrollment enrollment = enrollmentRepository.findEnrollmentByEnrollmentID(enrollmentID);
@@ -94,5 +108,59 @@ public class EnrollmentImpl implements EnrollmentService {
         });
         return enrollmentDTO;
     }
+    @Override
+    @Transactional
+    public String addEnrollment(EnrollmentDTO enrollmentDTO) {
+        if (enrollmentRepository.existsById(enrollmentDTO.getEnrollmentID())){
+            return "Enrollment is exist";
+        }
+        if (!courseRepository.existsById(enrollmentDTO.getCourseID())){
+            return "Course is not exist";
+        }
+        if (enrollmentDTO.getQuantity() < 0){
+            return "Quantity is invalid";
+        }
+        if (!instructorRepository.existsById(enrollmentDTO.getInstructorID())){
+            return "Instructor is not exist";
+        }
+        AtomicBoolean check = new AtomicBoolean(false);
+        enrollmentDTO.getScheduleStudy().forEach((element)->{
+            if (scheduleImpl.checkScheduleByRoomName(enrollmentDTO.getRoomName(),element)){
+                check.set(true);
+                return;
+            }
+        });
+        enrollmentDTO.getEnrollmentPs().forEach((element)->{
+                if (scheduleImpl.checkScheduleByRoomName(enrollmentDTO.getRoomName(),element.getScheduleStudy())){
+                    check.set(true);
+                    return;
+                }
+        });
+        if (check.get()){
+            return "Schedule is duplicate";
+        }
+        Course course = courseRepository.findById(enrollmentDTO.getCourseID()).orElse(null);
+        Enrollment enrollment = modelMapper.map(enrollmentDTO, Enrollment.class);
+        Instructor instructor = instructorRepository.findById(enrollmentDTO.getInstructorID()).orElse(null);
+        enrollment.setCourse(course);
+        enrollment.setInstuctor(instructor);
+        List<Student_Enrollment> student_enrollments = new ArrayList<>();
+        enrollment.setStudentEnrollments(student_enrollments);
+        enrollmentRepository.save(enrollment);
+        return "Add enrollment success";
+    }
+
+    @Override
+    public String getEnrollmentID(String courseID) {
+       int slEnrollment = enrollmentRepository.findEnrollmentsByCourse_CourseID(courseID).size();
+         return courseID.substring(1) + "00" + (slEnrollment + 1);
+    }
+
+    @Override
+    public String getEnrollmentName(String majorID) {
+        int slEnrollment = enrollmentRepository.findEnrollmentsByName(majorID).size();
+        return "DH" +majorID + Caculator.PROGRAM + (char) (slEnrollment + 64);
+    }
+
 
 }

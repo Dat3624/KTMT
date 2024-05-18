@@ -43,4 +43,16 @@ public class EnrollmentController {
     public List<EnrollmentDTO> getAllEnrollmentByCourseIDInSemesterAndYear(@RequestParam("courseID") String courseID, @RequestParam("semester") int semester, @RequestParam("year") int year){
         return enrollmentService.getAllEnrollmentByCourseIDInSemesterAndYear(courseID, semester, year);
     }
+    @PostMapping("/admin/monhoc/themlophocphan")
+    public String addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO){
+        return enrollmentService.addEnrollment(enrollmentDTO);
+    }
+    @GetMapping("/admin/monhoc/lophocphan/malophocphan")
+    public String getEnrollmentID(@RequestParam("courseID") String courseID){
+        return enrollmentService.getEnrollmentID(courseID);
+    }
+    @GetMapping("/admin/monhoc/lophocphan/tenlophocphan")
+    public String getEnrollmentName(@RequestParam("majorID") String majorID){
+        return enrollmentService.getEnrollmentName(majorID);
+    }
 }

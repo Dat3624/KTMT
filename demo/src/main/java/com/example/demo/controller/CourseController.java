@@ -33,4 +33,8 @@ public class CourseController {
         }
         return result;
     }
+    @GetMapping("/admin/monhoc/lophocphan/mamonhoc")
+    public String getCourseID(){
+        return courseImpl.getAllCourses().size() + 1 + "";
+    }
 }

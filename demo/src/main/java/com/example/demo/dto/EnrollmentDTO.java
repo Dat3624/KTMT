@@ -13,22 +13,25 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EnrollmentDTO {
-
     private String enrollmentID;
     private String name;
     private int year;
     private int semester;
     private int quantity;
-    private int quantityApply;
+
     private String roomName;
     private LocalDate dateStart;
     private LocalDate dateApplyStart;
     private LocalDate dateApplyEnd;
-    private int credit;
-    private String nameCourse;
+    private String courseID;
+    private Schedule exam;
     private EnrollmentStatus status;
     private List<Schedule> scheduleStudy;
     private List<EnrollmentPDTO> enrollmentPs;
+    private int credit;
+    private String instructorID;
+    private String nameCourse;
+    private int quantityApply;
     private String nameInstuctor;
     private int fee;
     private String codePractice;
