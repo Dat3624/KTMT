@@ -28,6 +28,14 @@ public class Schedule {
     @OneToOne(mappedBy = "exam", fetch = FetchType.EAGER)
     private Enrollment enrollmentExam;
 
+    public void setEnrollment(Enrollment enrollment) {
+        this.enrollment = enrollment;
+    }
+
+    public void setEnrollmentP(EnrollmentP enrollmentP) {
+        this.enrollmentP = enrollmentP;
+    }
+
     public int getScheduleID() {
         return scheduleID;
     }

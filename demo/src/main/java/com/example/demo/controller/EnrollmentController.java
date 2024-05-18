@@ -66,4 +66,10 @@ public class EnrollmentController {
         result.put("result", enrollmentService.getEnrollmentName(majorID));
         return result;
     }
+    @PostMapping("/admin/monhoc/lophocphan/capnhattrangthai")
+    public Map<String,Object> transferEnrollmentStatus(@RequestBody EnrollmentDTO enrollmentDTO){
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", enrollmentService.transferEnrollmentStatus(enrollmentDTO.getEnrollmentID(), enrollmentDTO.getStatus()));
+        return result;
+    }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.dto.EnrollmentDTO;
+import com.example.demo.entities.EnrollmentStatus;
 import com.example.demo.entities.Schedule;
 import org.springframework.stereotype.Service;
 
@@ -13,4 +14,5 @@ List<EnrollmentDTO> getAllEnrollmentByCourseIDInSemesterAndYear(String courseID,
 String addEnrollment(EnrollmentDTO enrollmentDTO);
 String getEnrollmentID(String courseID);
 String getEnrollmentName(String majorID);
+String transferEnrollmentStatus(String enrollmentID, EnrollmentStatus status);
 }

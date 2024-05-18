@@ -1,7 +1,6 @@
 package com.example.demo.services.impl;
 
 import com.example.demo.dto.EnrollmentDTO;
-import com.example.demo.dto.ScheduleDTO;
 import com.example.demo.entities.*;
 import com.example.demo.model.Caculator;
 import com.example.demo.repositories.*;
@@ -34,6 +33,8 @@ public class EnrollmentImpl implements EnrollmentService {
     private InstructorRepository instructorRepository;
     @Autowired
     private ScheduleService scheduleImpl;
+    @Autowired
+    private ScheduleRepository scheduleRepositor;
 
     @Override
     public List<EnrollmentDTO> getAllEnrollmentByCourseID(String courseID) {
@@ -134,13 +135,33 @@ public class EnrollmentImpl implements EnrollmentService {
             return "Schedule is duplicate";
         }
         Course course = courseRepository.findById(enrollmentDTO.getCourseID()).orElse(null);
+        List<Instructor> instructors = enrollmentDTO.getEnrollmentPs().stream().map((element)->{
+            return instructorRepository.findById(element.getInstructorID()).orElse(null);
+        }).toList();
         Enrollment enrollment = modelMapper.map(enrollmentDTO, Enrollment.class);
+        AtomicInteger flag = new AtomicInteger(1);
+        enrollment.getEnrollmentPs().forEach((element)->{
+            element.setEnrollment(enrollment);
+            element.setEnrollmentPID(enrollment.getEnrollmentID() + flag.get());
+            element.setName("nhom " + flag.get());
+            element.getScheduleStudy().setEnrollmentP(element);
+            element.setInstructor(instructors.get(flag.get()-1));
+            flag.incrementAndGet();
+
+        });
         Instructor instructor = instructorRepository.findById(enrollmentDTO.getInstructorID()).orElse(null);
+        enrollment.getScheduleStudy().forEach((element)->{
+            element.setEnrollment(enrollment);
+        });
         enrollment.setCourse(course);
         enrollment.setInstuctor(instructor);
         List<Student_Enrollment> student_enrollments = new ArrayList<>();
         enrollment.setStudentEnrollments(student_enrollments);
+        Schedule exam = scheduleRepositor.findById(9).orElse(null);
+        enrollment.setExam(exam);
         enrollmentRepository.save(enrollment);
+        System.out.println(enrollment.getEnrollmentPs());
+
         return "Add enrollment success";
     }
 
@@ -154,6 +175,17 @@ public class EnrollmentImpl implements EnrollmentService {
     public String getEnrollmentName(String majorID) {
         int slEnrollment = enrollmentRepository.findEnrollmentsByName(majorID).size();
         return "DH" +majorID + Caculator.PROGRAM + (char) (slEnrollment + 64);
+    }
+    @Transactional
+    @Override
+    public String transferEnrollmentStatus(String enrollmentID, EnrollmentStatus status) {
+        Enrollment enrollment = enrollmentRepository.findEnrollmentByEnrollmentID(enrollmentID);
+        if (enrollment == null){
+            return "Enrollment is not exist";
+        }
+        enrollment.setStatus(status);
+        enrollmentRepository.save(enrollment);
+        return "Transfer status success";
     }
 
 

@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Table(name = "enrollmentPractives")
 public class EnrollmentP {
     @Id
@@ -28,6 +27,15 @@ public class EnrollmentP {
     @JoinColumn(name = "id")
     private Instructor instructor;
 
-
-
+    @Override
+    public String toString() {
+        return "EnrollmentP{" +
+                "enrollmentPID='" + enrollmentPID + '\'' +
+                ", name='" + name + '\'' +
+                ", room='" + room + '\'' +
+                ", quantity=" + quantity +
+                ", scheduleStudy=" + scheduleStudy +
+                ", instructor=" + instructor +
+                '}';
+    }
 }
