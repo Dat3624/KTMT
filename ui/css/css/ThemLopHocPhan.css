@@ -1,6 +1,6 @@
 .main-content {
     background-color: #fff;
-    margin: 10px 0 0 7px ;
+    /* margin: 10px 0 0 7px ; */
     border: 1px solid #e1e1e1;
 }
 
@@ -79,7 +79,7 @@
     border-radius: 5px;
     cursor: pointer;
     padding: 5px 10px;
-    width: 150px;
+    /* width: 150px; */
 }
 
 .option-hoc {
@@ -173,10 +173,9 @@ tr.active {
     gap: 20px;
 }
 
-h2.h2_modal {
+.h2_modal {
     font-size: 24px;
     color: #0a58ab;
     text-align: right;
-    margin: 20px 0;
-    padding: 10px;
+
 }

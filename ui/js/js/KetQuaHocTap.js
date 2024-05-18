@@ -13,7 +13,6 @@ function result(){
         var table = document.querySelector('#xemDiem');
         var tbody = table.querySelector('tbody');
 
-        console.log(data[0].semester);
         const row = tbody.insertRow();
         let hk = `<tr>
             <td colspan="19" class="text-left row-head bold">HK2 (2021-2022)</td>
@@ -24,17 +23,63 @@ function result(){
             if(element.semester == 2 && element.year == 2024) {
                 var overallScore = element.overallScore;
                 var diemChu;
-                if(overallScore >= 9) {
+                var diemBon;
+                var loai;
+                var dat;
+                if(overallScore >= 8.5) {
                     diemChu = 'A';
-                } else if(overallScore >= 8) {
+                    diemBon = 4;
+                    loai = 'Giỏi';
+                    dat = 'Đạt';
+                } else if(overallScore >= 7) {
                     diemChu = 'B';
-                } else if(overallScore >= 6.5) {
+                    diemBon = 3;
+                    loai = 'Khá';
+                    dat = 'Đạt';
+                } else if(overallScore >= 5.5) {
                     diemChu = 'C';
-                } else if(overallScore >= 5) {
+                    diemBon = 2;
+                    loai = 'Trung bình';
+                    dat = 'Đạt';
+                } else if(overallScore >= 4) {
                     diemChu = 'D';
+                    diemBon = 1;
+                    loai = 'Yếu';
+                    dat = 'Đạt'
                 } else {
                     diemChu = 'F';
+                    diemBon = 0;
+                    loai = 'Kém';
+                    dat = 'Rớt môn'
                 }
+                if(element.regularScore.length==0){
+                    for(var i = element.regularScore.length;i<3;i++){
+                        element.regularScore[i]=""
+                    }
+                } else if(element.regularScore.length<2){
+                    for(var i = element.regularScore.length;i<3;i++){
+                        element.regularScore[i]=""
+                    }
+                } else {
+                    for(var i = element.regularScore.length;i<3;i++){
+                        element.regularScore[i]=""
+                    }
+                }
+
+                if(element.practiceScore.length==0){
+                    for(var i = element.practiceScore.length;i<3;i++){
+                        element.practiceScore[i]=""
+                    }
+                } else if(element.practiceScore.length<2){
+                    for(var i = element.practiceScore.length;i<3;i++){
+                        element.practiceScore[i]=""
+                    }
+                } else {
+                    for(var i = element.practiceScore.length;i<3;i++){
+                        element.practiceScore[i]=""
+                    }
+                }
+
                 const row = tbody.insertRow();
                 let diem = `
                     <td>${index + 1}</td>
@@ -51,10 +96,10 @@ function result(){
                     <td>${element.practiceScore[2]}</td>
                     <td>${element.finalScore}</td>
                     <td>${element.overallScore}</td>
-                    <td>thang 4</td>
+                    <td>${diemBon}</td>
                     <td>${diemChu}</td>
-                    <td>loai</td>
-                    <td>dat</td>
+                    <td>${loai}</td>
+                    <td>${dat}</td>
                 `
                 row.innerHTML = diem;
             }
