@@ -37,8 +37,10 @@ public class EnrollmentController {
         return enrollmentService.getAllEnrollmentById(enrollmentID);
     }
     @PostMapping("/dangkyhocphan/lophocphan/sinhvien/huydangky")
-    public String cancelEnrollment(@RequestBody Student_EnrollmentDTO studentEnrollmentDTO) {
-        return student_enrollmentImpl.cancelEnrollment(studentEnrollmentDTO);
+    public Map<String, Object> cancelEnrollment(@RequestBody Student_EnrollmentDTO studentEnrollmentDTO) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", student_enrollmentImpl.cancelEnrollment(studentEnrollmentDTO));
+        return result;
     }
     @GetMapping("/admin/monhoc/lophocphan")
     public List<EnrollmentDTO> getAllEnrollmentByCourseIDInSemesterAndYear(@RequestParam("courseID") String courseID, @RequestParam("semester") int semester, @RequestParam("year") int year){
@@ -46,14 +48,20 @@ public class EnrollmentController {
     }
     @PostMapping("/admin/monhoc/themlophocphan")
     public Map<String,Object> addEnrollment(@RequestBody EnrollmentDTO enrollmentDTO){
-        return (Map<String, Object>) new HashMap<>().put("result",enrollmentService.addEnrollment(enrollmentDTO));
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", enrollmentService.addEnrollment(enrollmentDTO));
+        return result;
     }
     @GetMapping("/admin/monhoc/lophocphan/malophocphan")
     public Map<String,Object> getEnrollmentID(@RequestParam("courseID") String courseID){
-        return (Map<String, Object>) new HashMap<>().put("result",enrollmentService.getEnrollmentID(courseID));
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", enrollmentService.getEnrollmentID(courseID));
+        return result;
     }
     @GetMapping("/admin/monhoc/lophocphan/tenlophocphan")
     public Map<String,Object> getEnrollmentName(@RequestParam("majorID") String majorID){
-        return (Map<String, Object>) new HashMap<>().put("result",enrollmentService.getEnrollmentName(majorID));
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", enrollmentService.getEnrollmentName(majorID));
+        return result;
     }
 }
