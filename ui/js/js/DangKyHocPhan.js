@@ -198,7 +198,10 @@ function register() {
         return;
     }
 
-    var activeRowCount = 0;
+    var tableClass = document.querySelector('#tb-class tbody');
+    if (tableClass.rows.length > 1) {
+        console.log(tableClass.rows.length);
+        var activeRowCount = 0;
     if (tableDetail.rows.length > 1) {
         for (var i = 0; i < tableDetail.rows.length; i++) {
             if (tableDetail.rows[i].classList.contains("active")) {
@@ -210,6 +213,9 @@ function register() {
             return;
         }
     }
+    }
+
+    
 
     var codePractive = nhomTH;
 
