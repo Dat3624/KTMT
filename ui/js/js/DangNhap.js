@@ -10,11 +10,7 @@ function login(){
     } else {
         fetch(accountNormalAPI + '/' + username)
         .then(function(response){
-            // return response.json();
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.text();
+            return response.json();
         })
         .then(function(account){
             console.log(account);
