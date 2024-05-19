@@ -96,7 +96,7 @@
             <div class="option d-flex justify-content-around align-items-center">
                 <div class="register">
                     <label class="mr-5 text-dark bold" for="dangky">Đợt đăng ký</label>
-                    <select id="semester" class="register-btn" name="dangky" id="dangky">
+                    <select id="semester" class="register-btn" name="dangky">
                         <option value="HK3 (2024-2025)">HK3 (2024-2025)</option>
                         <option value="HK2 (2024-2025)">HK2 (2024-2025)</option>
                         <option value="HK1 (2024-2025)">HK1 (2024-2025)</option>
@@ -104,7 +104,14 @@
                 </div>
             </div>
             <div class="button-container">
-                <button data-toggle="modal" data-target="#themLHP" class="btn-logout bold">Thêm lớp học phần</button>
+                <button data-toggle="modal" data-target="#themLHP" class="btn-logout bold mr-5">Thêm lớp học phần</button>
+                <p class="ml-5">Thay đổi trạng thái lớp học phần</p>
+                <select name="status" id="statusLHP" class="register-btn">
+                    <option value="" disabled selected>Chọn trạng thái</option>
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="INACTIVE">INACTIVE</option>
+                    <option value="FINISHED">FINISHED</option>
+                </select>
             </div>
             <div class="tb-class">
                 <table id="tb-class" class="my-table table table-bordered">
@@ -132,6 +139,7 @@
                         <tr>
                             <th>STT</th>
                             <th>Lịch học</th>
+                            <th>Nhóm TH</th>
                             <th>Phòng</th>
                             <th>Giảng viên</th>
                             <th>Thời gian</th>
@@ -235,7 +243,7 @@
                             <span>Học kỳ</span>
                         </div>
                         <div class="col-2">
-                            <select name="" id="semester" class="register-btn">
+                            <select name="" id="semesterDK" class="register-btn">
                                 <option value="" disabled selected>Chọn học kỳ</option>
                                 <option value="HK1">HK1</option>
                                 <option value="HK2">HK2</option>

@@ -7,6 +7,8 @@ var maLHPAPI = 'http://localhost:8081/admin/monhoc/lophocphan/malophocphan';
 var tenLHPAPI = 'http://localhost:8081/admin/monhoc/lophocphan/tenlophocphan';
 var maCourseAPI = 'http://localhost:8081/admin/monhoc/lophocphan/mamonhoc';
 var addClassAPI = 'http://localhost:8081/admin/monhoc/themlophocphan';
+var detailClassAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/chitietlophocphan?enrollmentID=';
+var statusClassAPI = 'http://localhost:8081/admin/monhoc/lophocphan/capnhattrangthai';
 
 // xử lý sự kiện khi chọn checkbox tiên quyết
 var checkbox = document.getElementById('tienQuyet');
@@ -53,6 +55,8 @@ function loadCourse(majorID) {
                 courseID_current = course.courseID;
                 courseName_current = course.name;
                 choiceCourse(courseID_current, courseName_current);
+                var tableDetail = document.querySelector('#tb-detail tbody');
+                tableDetail.innerHTML = '';
             });
         });
     })
@@ -94,6 +98,7 @@ function choiceCourse(courseID, courseName) {
                 }
                 this.classList.add('active');
                 choiceClass(lop.enrollmentID);
+                
             });
         });
     })
@@ -121,7 +126,11 @@ function validCourse() {
     var type = document.getElementById('type').value;
     var majorID = document.getElementById('major').value;
 
-    if (courseID == '' || courseName == '' || credits == '' || type == '' || majorID == '') {
+    if (majorID == '') {
+        alert('Vui lòng chọn chuyên ngành');
+        return false;
+    }
+    if (courseID == '' || courseName == '' || credits == '' || type == '') {
         alert('Vui lòng nhập đầy đủ thông tin');
         return false;
     }
@@ -173,10 +182,9 @@ function addCourse() {
         body: JSON.stringify(course)
     })
     .then(response => {
-        return response.text();
-    })
-    .then(response => {
-        response.text().then(data => alert(data.result));
+        response.json().then(data => {
+            alert(data.result);
+        });
         $('#myModal').modal('hide');
         loadCourse(majorID);
     })
@@ -344,37 +352,12 @@ function addPractice() {
     document.getElementById('practice').value = textLopTH;
 }
 
-// valid lớp học phần
-function validLHP() {
-    var enrollmentID = document.getElementById('enrollmentID').value;
-    var name = document.getElementById('name').value;
-    var year = document.getElementById('year').value;
-    var quantity = document.getElementById('quantity').value;
-    var roomName = document.getElementById('roomName').value;
-    var instructor = document.getElementById('instructor').value;
-    var status = document.getElementById('status').value;
-    var dateStart = document.getElementById('nam').value + '-' + document.getElementById('thang').value + '-' + document.getElementById('ngay').value;
-    var dateApplyStart = document.getElementById('nam1').value + '-' + document.getElementById('thang1').value + '-' + document.getElementById('ngay1').value;
-    var dateApplyEnd = document.getElementById('nam2').value + '-' + document.getElementById('thang2').value + '-' + document.getElementById('ngay2').value;
-    var scheduleStudy = schedule;
-    if (document.getElementById('thuchanh').checked) {
-        var enrollmentPs = lopTH;
-    } else {
-        var enrollmentPs = [];
-    }
-    if (enrollmentID == '' || name == '' || year == '' || quantity == '' || roomName == '' || instructor == '' || status == '' || dateStart == '' || dateApplyStart == '' || dateApplyEnd == '') {
-        alert('Vui lòng nhập đầy đủ thông tin');
-        return false;
-    }
-    return true;
-}    
-
 // thêm lớp học phần
 function addLHP() {
     var enrollmentID = document.getElementById('enrollmentID').value;
     var name = document.getElementById('name').value;
     var year = document.getElementById('year').value;
-    var semester = document.getElementById('semester').value.slice(2, 3);
+    var semester = document.getElementById('semesterDK').value.slice(2, 3);
     var quantity = document.getElementById('quantity').value;
     var roomName = document.getElementById('roomName').value;
     var instructor = document.getElementById('instructor').value;
@@ -397,7 +380,7 @@ function addLHP() {
         semester: semester,
         quantity: quantity,
         roomName: roomName,
-        instructor: instructor,
+        instructorID: instructor,
         courseID: courseID,
         status: status,
         dateStart: dateStart,
@@ -417,20 +400,20 @@ function addLHP() {
         body: JSON.stringify(lopHP)
     })
     .then(response => {
-        return response.text();
-    })
-    .then(response => {
-        response.text().then(data => alert(data.result));
+        response.json().then(data => {
+            alert(data.result);
+        });
         $('#themLHP').modal('hide');
+        choiceCourse(courseID_current, courseName_current);
     })
 }
 
 //  load chi tiết lớp học phần
 function choiceClass(enrollmentID) {
-    fetch('http://localhost:8081/admin/monhoc/lophocphan/chitiet?enrollmentID=' + enrollmentID)
+    fetch(detailClassAPI + enrollmentID)
     .then(response => response.json())
-    .then(data => {
-        console.log(data);
+    .then(detail => {
+        console.log(detail);
 
         var table = document.querySelector('#tb-detail');
         var tbody = table.querySelector('tbody');
@@ -444,11 +427,9 @@ function choiceClass(enrollmentID) {
             row.insertCell(3).textContent = detail.roomName;
             row.insertCell(4).textContent = detail.nameInstuctor;
             row.insertCell(5).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
-            row.classList.add('active');
         }
 
         for (var i = 0; i < detail.enrollmentPs.length; i++) {
-            thucHanh.push(detail.enrollmentPs[i]);
             const row = tbody.insertRow();
             row.insertCell(0).textContent = i + 1 + detail.scheduleStudy.length;
             row.insertCell(1).textContent = 'TH - Thứ ' + detail.enrollmentPs[i].scheduleStudy.dayOfWeek + ' (T' + detail.enrollmentPs[i].scheduleStudy.classesStart + ' - T' + detail.enrollmentPs[i].scheduleStudy.classesEnd + ')';
@@ -459,3 +440,39 @@ function choiceClass(enrollmentID) {
         }
     })
 }
+
+// thay đổi trạng thái lớp học phần
+function changeStatus(status) {
+    var tableClass = document.getElementById('tb-class');
+    var activeRow = tableClass.querySelector('.active');
+    if (!activeRow) {
+        alert('Vui lòng chọn lớp học phần cần thay đổi trạng thái');
+        return;
+    }
+    var enrollmentID = activeRow.cells[1].textContent;
+    var status = status;
+    var data = {
+        enrollmentID: enrollmentID,
+        status: status
+    }
+    console.log(data);
+    fetch(statusClassAPI, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        return response.json();
+    })
+    .then(response => {
+        alert(response.result);
+        activeRow.cells[6].textContent = status;
+    })
+}
+
+var choiceStatus = document.getElementById('statusLHP');
+choiceStatus.addEventListener('change', function() {
+    changeStatus(choiceStatus.value);
+});

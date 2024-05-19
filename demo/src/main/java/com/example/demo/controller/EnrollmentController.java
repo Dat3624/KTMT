@@ -75,7 +75,7 @@ public class EnrollmentController {
     @PostMapping("/admin/monhoc/lophocphan/xoalophocphan")
     public Map<String,Object> deleteEnrollment(@RequestBody EnrollmentDTO enrollmentDTO){
         Map<String, Object> result = new HashMap<>();
-        result.put("result", enrollmentService.deleteEnrollment(enrollmentDTOcomm));
+        result.put("result", enrollmentService.deleteEnrollment(enrollmentDTO));
         return result;
     }
 }

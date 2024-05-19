@@ -239,19 +239,16 @@ function register() {
         body: JSON.stringify(enrollment)
     })
         .then((res) => {
-            res.text().then((data) => {
-                alert(data.result);
-            });
+            return res.json();
         })
         .then((response) => {
+            alert(response.result);
             loadListOfRegisteredClass();
             loadListOfCourse();
-            var table = document.querySelector('#tb-detail');
-            var tbody = table.querySelector('tbody');
-            tbody.innerHTML = '';
-            var table = document.querySelector('#tb-class');
-            var tbody = table.querySelector('tbody');
-            tbody.innerHTML = '';
+            var tableDetail = document.querySelector('#tb-detail tbody');
+            tableDetail.innerHTML = '';
+            var tableClass = document.querySelector('#tb-class tbody');
+            tableClass.innerHTML = '';
         })
 }
 
@@ -261,15 +258,10 @@ function loadListOfRegisteredClass() {
     studentID = document.getElementById('sv-mssv').textContent;
     year = new Date().getFullYear();
     semester = document.getElementById('semester').value.slice(2, 3);
-
+    console.log(lopHPDaDangKyAPI + '?studentID=' + studentID + '&semester=' + semester + '&year=' + year)
     fetch(lopHPDaDangKyAPI + '?studentID=' + studentID + '&semester=' + semester + '&year=' + year)
     .then(function(response) {
-        // console.log(response.text());
-        // return response.json();
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.text();
+        return response.json();
     })
     .then(function(registers) {
         dsHPDaDangKy = registers;
@@ -375,12 +367,10 @@ function cancelLHP(currentEnrollmentID) {
         body: JSON.stringify(enrollment)
     })
         .then((res) => {
-            res.text().then((data) => {
-                alert(data.result);
-            });
+            return res.json();
         })
         .then((response) => {
-            alert('Hủy đăng ký thành công');
+            alert(response.result);
             $('#myModal').modal('hide');
             loadListOfRegisteredClass();
             loadListOfCourse();
