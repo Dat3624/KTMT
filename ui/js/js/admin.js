@@ -57,6 +57,7 @@ function loadCourse(majorID) {
                 choiceCourse(courseID_current, courseName_current);
                 var tableDetail = document.querySelector('#tb-detail tbody');
                 tableDetail.innerHTML = '';
+                clearModalLHP();
             });
         });
     })
@@ -73,12 +74,8 @@ function choiceCourse(courseID, courseName) {
     })
     .then(function(classes) {
         console.log(classes);
-        if (classes.length == 0) {
-            return;
-        }
         var table = document.querySelector('#tb-class');
         var tbody = table.querySelector('tbody');
-
         tbody.innerHTML = '';
 
         classes.forEach((lop, index) => {
@@ -187,6 +184,12 @@ function addCourse() {
         });
         $('#myModal').modal('hide');
         loadCourse(majorID);
+        document.getElementById('courseID').value = "";
+        document.getElementById('courseName').value = "";
+        document.getElementById('credits').value = "";
+        document.getElementById('type').value = "";
+        prerequisite_global = "";
+        document.getElementById('major').value   = "";
     })
 }
 
@@ -271,29 +274,63 @@ function loadInstructor(choiceMajor) {
     .catch(error => console.error('Error:', error));
 }
 
+function dieuKienTaoMaVaTenLHP() {
+    var majorID = document.getElementById('major').value;
+    if (majorID == '') {
+        alert('Vui lòng chọn chuyên ngành');
+        return false;
+    }
+    var activeCourse = document.querySelector('#tb-course tr.active');
+    if (!activeCourse) {
+        alert('Vui lòng chọn môn học cần tạo lớp học phần');
+        return false;
+    }
+    return true;
+}
+
 // taọ mã lớp học phần
 function taoMaLHP() {
-    fetch(maLHPAPI + '?courseID=' + courseID_current)
-    .then(response => response.json())
-    .then(data => {
-        var maLHP = document.getElementById('enrollmentID');
-        maLHP.value = data.result;
-    })
+    if (dieuKienTaoMaVaTenLHP()) {
+        fetch(maLHPAPI + '?courseID=' + courseID_current)
+        .then(response => response.json())
+        .then(data => {
+            var maLHP = document.getElementById('enrollmentID');
+            maLHP.value = data.result;
+        })
+    } 
 }
 
 // taọ tên lớp học phần
 function taoTenLHP() {
-    fetch(tenLHPAPI + '?majorID=' + choiceMajor.value)
-    .then(response => response.json())
-    .then(data => {
-        var maLHP = document.getElementById('name');
-        maLHP.value = data.result;
-    })
+    if (dieuKienTaoMaVaTenLHP()) {
+        fetch(tenLHPAPI + '?majorID=' + choiceMajor.value)
+        .then(response => response.json())
+        .then(data => {
+            var tenLHP = document.getElementById('name');
+            tenLHP.value = data.result;
+        })
+    }
+}
+
+// valid lịch học
+function validAddScheduleStudy() {
+    var thu = document.getElementById('thu').value;
+    var tietBD = document.getElementById('tietBatDau').value;
+    var tietKT = document.getElementById('tietKetThuc').value;
+
+    if (thu == '' || tietBD == '' || tietKT == '') {
+        alert('Vui lòng nhập đầy đủ thông tin của lịch học lý thuyết');
+        return false;
+    }
+    return true;
 }
 
 // thêm lịch học
 var schedule = [];
 function addScheduleStudy() {
+    if (!validAddScheduleStudy()) {
+        return;
+    }
     var thu = document.getElementById('thu').value;
     var tietBD = document.getElementById('tietBatDau').value;
     var tietKT = document.getElementById('tietKetThuc').value;
@@ -316,9 +353,28 @@ function addScheduleStudy() {
     document.getElementById('scheduleStudy').value = textSchedule;
 }
 
+// valid lịch thực hành
+function validAddPractice() {
+    var phong = document.getElementById('phongTH').value;
+    var quantity = document.getElementById('siSoTH').value;
+    var instructorTH = document.getElementById('instructorTH').value;
+    var thu = document.getElementById('thuTH').value;
+    var tietBD = document.getElementById('tietBatDauTH').value;
+    var tietKT = document.getElementById('tietKetThucTH').value;
+
+    if (phong == '' || quantity == '' || instructorTH == '' || thu == '' || tietBD == '' || tietKT == '') {
+        alert('Vui lòng nhập đầy đủ thông tin của lớp học thực hành');
+        return false;
+    }
+    return true;
+}
+
 // thêm lớp thực hành
 var lopTH = [];
 function addPractice() {
+    if (!validAddPractice()) {
+        return;
+    }
     var phong = document.getElementById('phongTH').value;
     var quantity = document.getElementById('siSoTH').value;
     var instructorTH = document.getElementById('instructorTH').value;
@@ -352,8 +408,42 @@ function addPractice() {
     document.getElementById('practice').value = textLopTH;
 }
 
+// valid thêm lớp học phần
+function validAddLHP() {
+    var enrollmentID = document.getElementById('enrollmentID').value;
+    var name = document.getElementById('name').value;
+    var year = document.getElementById('year').value;
+    var quantity = document.getElementById('quantity').value;
+    var roomName = document.getElementById('roomName').value;
+    var instructor = document.getElementById('instructor').value;
+    var status = document.getElementById('status').value;
+    var dateStart = document.getElementById('nam').value + '-' + document.getElementById('thang').value + '-' + document.getElementById('ngay').value;
+    var dateApplyStart = document.getElementById('nam1').value + '-' + document.getElementById('thang1').value + '-' + document.getElementById('ngay1').value;
+    var dateApplyEnd = document.getElementById('nam2').value + '-' + document.getElementById('thang2').value + '-' + document.getElementById('ngay2').value;
+    
+    if (enrollmentID == '' || name == '' || year == '' || quantity == '' || roomName == '' || instructor == '' || status == '' || dateStart == '' || dateApplyStart == '' || dateApplyEnd == '') {
+        alert('Vui lòng nhập đầy đủ thông tin');
+        return false;
+    }
+    
+    if (schedule.length == 0) {
+        alert('Vui lòng nhập lịch học lý thuyết');
+        return false;
+    }
+
+    if (document.getElementById('thuchanh').checked && lopTH.length == 0) {
+        alert('Vui lòng nhập lịch học thực hành');
+        return false;
+    }
+    
+    return true;
+}
+
 // thêm lớp học phần
 function addLHP() {
+    if (!validAddLHP()) {
+        return;
+    }
     var enrollmentID = document.getElementById('enrollmentID').value;
     var name = document.getElementById('name').value;
     var year = document.getElementById('year').value;
@@ -404,8 +494,44 @@ function addLHP() {
             alert(data.result);
         });
         $('#themLHP').modal('hide');
+        clearModalLHP();
         choiceCourse(courseID_current, courseName_current);
     })
+}
+
+
+// xóa thông tin của modal thêm lớp học phần
+function clearModalLHP() {
+    document.getElementById('enrollmentID').value = "";
+    document.getElementById('name').value = "";
+    document.getElementById('year').value = "";
+    document.getElementById('quantity').value = "";
+    document.getElementById('semesterDK').value = "";
+    document.getElementById('roomName').value = "";
+    document.getElementById('instructor').value = "";
+    document.getElementById('status').value = "";
+    document.getElementById('nam').value = "";
+    document.getElementById('thang').value = "";
+    document.getElementById('ngay').value = "";
+    document.getElementById('nam1').value = "";
+    document.getElementById('thang1').value = "";
+    document.getElementById('ngay1').value = "";
+    document.getElementById('nam2').value = "";
+    document.getElementById('thang2').value = "";
+    document.getElementById('ngay2').value = "";
+    document.getElementById('scheduleStudy').value = "";
+    document.getElementById('thu').value = "";
+    document.getElementById('tietBatDau').value = "";
+    document.getElementById('tietKetThuc').value = "";
+    document.getElementById('practice').value = "";
+    document.getElementById('thuTH').value = "";
+    document.getElementById('tietBatDauTH').value = "";
+    document.getElementById('tietKetThucTH').value = "";
+    document.getElementById('phongTH').value = "";
+    document.getElementById('siSoTH').value = "";
+    document.getElementById('instructor').value = "";
+    schedule = [];
+    lopTH = [];
 }
 
 //  load chi tiết lớp học phần
@@ -426,7 +552,7 @@ function choiceClass(enrollmentID) {
             row.insertCell(2).textContent = "";
             row.insertCell(3).textContent = detail.roomName;
             row.insertCell(4).textContent = detail.nameInstuctor;
-            row.insertCell(5).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
+            row.insertCell(5).textContent = detail.dateStart;
         }
 
         for (var i = 0; i < detail.enrollmentPs.length; i++) {
@@ -436,7 +562,7 @@ function choiceClass(enrollmentID) {
             row.insertCell(2).textContent = detail.enrollmentPs[i].name;
             row.insertCell(3).textContent = detail.enrollmentPs[i].room;
             row.insertCell(4).textContent = detail.enrollmentPs[i].nameInstructor;
-            row.insertCell(5).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
+            row.insertCell(5).textContent = detail.dateStart;
         }
     })
 }
@@ -469,6 +595,7 @@ function changeStatus(status) {
     .then(response => {
         alert(response.result);
         activeRow.cells[6].textContent = status;
+        document.getElementById('statusLHP').value = "";
     })
 }
 
