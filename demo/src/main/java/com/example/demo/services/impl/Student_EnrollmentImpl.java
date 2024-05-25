@@ -56,9 +56,9 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
             return "Không đủ điều kiện tien quyet";
         }
         //check trung lich
-        Schedule schedule = checkSchedule(studentEnrollmentDTO.getStudentID(),studentEnrollmentDTO.getEnrollmentID(),studentEnrollmentDTO.getCodePractive());
-        if(schedule!=null){
-            return "Trùng lịch học với lich " + schedule.getDayOfWeek() + " từ " + schedule.getClassesStart() + " đến " + schedule.getClassesEnd();
+        String schedule = checkSchedule(studentEnrollmentDTO.getStudentID(),studentEnrollmentDTO.getEnrollmentID(),studentEnrollmentDTO.getCodePractive());
+        if(!schedule.isEmpty()){
+            return schedule;
         }
 
         Student_Enrollment student_enrollment = modelMapper.map(studentEnrollmentDTO, Student_Enrollment.class);
@@ -103,12 +103,13 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
     }
 
     @Override
-    public Schedule checkSchedule(String studentID, String EnrollmentID, String enrollmentPID) {
-        AtomicReference<Schedule> schedule = new AtomicReference<>();
+    public String checkSchedule(String studentID, String EnrollmentID, String enrollmentPID) {
+        AtomicReference<String> rs = new AtomicReference<>("");
+        // goi lich hoc cua sinh vien
         Student student = studentRepository.findById(studentID).orElse(null);
         List<Student_Enrollment> student_enrollments = student_enrollmentRepository.findStudent_EnrollmentsByStudentStudent(student);
         if (student_enrollments.isEmpty()){
-            return schedule.get();
+            return "";
         }
         Enrollment enrollment = enrollmentRepository.findEnrollmentByEnrollmentID(EnrollmentID);
         student_enrollments.forEach((element)->{
@@ -116,7 +117,7 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
                 enrollment.getScheduleStudy().forEach((element2)->{
                     if(!scheduleImpl.checkSchedule(element1, element2)){
                         System.out.println(element2);
-                        schedule.set(element1);
+                        rs.set("Trùng lịch học với lich của môn "+ element.getEnrollment().getCourse().getName()+" thứ "+ element1.getDayOfWeek() + " từ tiết " + element1.getClassesStart() + " đến " + element1.getClassesEnd());
                         return;
                     }
                 });
@@ -124,10 +125,11 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
                     return;
                 }
                 EnrollmentP enrollmentP = enrollmentPRepository.findById(enrollmentPID).orElse(null);
-                assert enrollmentP != null;
+                if(enrollmentP==null){
+                    return;
+                }
                 if(!scheduleImpl.checkSchedule(enrollmentP.getScheduleStudy(),element1)){
-                    System.out.println(enrollmentP.getScheduleStudy());
-                        schedule.set(element1);
+                        rs.set("Trùng lịch học với lich của môn "+ element.getEnrollment().getCourse().getName()+" thứ "+ element1.getDayOfWeek() + " từ tiết " + element1.getClassesStart() + " đến " + element1.getClassesEnd());
                         return;
                     }
 
@@ -138,31 +140,24 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
             }
             EnrollmentP enrollmentP = enrollmentPRepository.findById(element.getCodePractive()).orElse(null);
                 enrollment.getScheduleStudy().forEach((element2)->{
-                    assert enrollmentP != null;
-                    if (enrollmentP.getScheduleStudy()==null){
+                    if(enrollmentP==null||enrollmentP.getScheduleStudy()==null){
                         return;
                     }
                     if(!scheduleImpl.checkSchedule(enrollmentP.getScheduleStudy(),element2)){
-                        schedule.set(enrollmentP.getScheduleStudy());
-
+                        rs.set("Trùng lịch học với lich của môn "+ element.getEnrollment().getCourse().getName()+" thứ "+ enrollmentP.getScheduleStudy().getDayOfWeek() + " từ tiết " + enrollmentP.getScheduleStudy().getClassesStart() + " đến " + enrollmentP.getScheduleStudy().getClassesEnd());
                         return;
                     }
                 });
             EnrollmentP enrollmentPDky = enrollmentPRepository.findById(enrollmentPID).orElse(null);
-            assert enrollmentPDky != null;
-            assert enrollmentP != null;
-            if (enrollmentPDky.getScheduleStudy()==null){
+            if (enrollmentPDky == null||enrollmentP == null || enrollmentPDky.getScheduleStudy()==null||enrollmentP.getScheduleStudy()==null){
                 return;
             }
-
             if(!scheduleImpl.checkSchedule(enrollmentPDky.getScheduleStudy(),enrollmentP.getScheduleStudy())){
-                schedule.set(enrollmentP.getScheduleStudy());
-
+                rs.set("Trùng lịch học với lich của môn "+ element.getEnrollment().getCourse().getName()+" thứ "+ enrollmentP.getScheduleStudy().getDayOfWeek() + " từ tiết " + enrollmentP.getScheduleStudy().getClassesStart() + " đến " + enrollmentP.getScheduleStudy().getClassesEnd());
                 return;
             }
-
         });
-        return schedule.get();
+        return rs.get();
     }
     @Transactional
     public String cancelEnrollment(Student_EnrollmentDTO studentEnrollmentDTO){

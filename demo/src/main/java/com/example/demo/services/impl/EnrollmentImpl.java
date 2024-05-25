@@ -1,6 +1,7 @@
 package com.example.demo.services.impl;
 
 import com.example.demo.dto.EnrollmentDTO;
+import com.example.demo.dto.ScheduleDTO;
 import com.example.demo.entities.*;
 import com.example.demo.model.Caculator;
 import com.example.demo.repositories.*;
@@ -42,7 +43,13 @@ public class EnrollmentImpl implements EnrollmentService {
             return enrollmentRepository.findEnrollmentsByCourse_CourseID(courseID).stream().map((element)->{
                 String nameInstructor = element.getInstuctor().getName();
                 int quantityApply = element.getStudentEnrollments().size();
+                List<ScheduleDTO> scheduleDTOS = element.getScheduleStudy().stream().map((element1)->{
+                    return modelMapper.map(element1, ScheduleDTO.class);
+                }).toList();
+                ScheduleDTO scheduleDTOexam = modelMapper.map(element.getExam(), ScheduleDTO.class);
                 EnrollmentDTO enrollmentDTO = modelMapper.map(element, EnrollmentDTO.class);
+                enrollmentDTO.setScheduleStudy(scheduleDTOS);
+                enrollmentDTO.setExam(scheduleDTOexam);
                 enrollmentDTO.setNameInstuctor(nameInstructor);
                 enrollmentDTO.setQuantityApply(quantityApply);
                 return enrollmentDTO;
@@ -59,8 +66,13 @@ public class EnrollmentImpl implements EnrollmentService {
         if(!student_enrollmentRepository.findStudent_EnrollmentsByStudentStudentAndEnrollment_SemesterAndEnrollment_Year(studentRepository.findById(studentID).orElse(null),semester,year).isEmpty()){
             return student_enrollmentRepository.findStudent_EnrollmentsByStudentStudentAndEnrollment_SemesterAndEnrollment_Year(studentRepository.findById(studentID).orElse(null),semester,year).stream().map((element)->{
                 Enrollment enrollment = enrollmentRepository.findEnrollmentByEnrollmentID(element.getEnrollment().getEnrollmentID());
-
+                List<ScheduleDTO> scheduleDTOS = enrollment.getScheduleStudy().stream().map((element1)->{
+                    return modelMapper.map(element1, ScheduleDTO.class);
+                }).toList();
+                ScheduleDTO scheduleDTOexam = modelMapper.map(enrollment.getExam(), ScheduleDTO.class);
                 EnrollmentDTO enrollmentDTO = modelMapper.map(enrollment, EnrollmentDTO.class);
+                enrollmentDTO.setScheduleStudy(scheduleDTOS);
+                enrollmentDTO.setExam(scheduleDTOexam);
                 enrollmentDTO.setCredit(enrollment.getCourse().getCredits());
                 enrollmentDTO.setNameCourse(enrollment.getCourse().getName());
                 enrollmentDTO.setCodePractice(element.getCodePractive());
@@ -126,10 +138,14 @@ public class EnrollmentImpl implements EnrollmentService {
         AtomicBoolean check = new AtomicBoolean(false);
         enrollmentDTO.getScheduleStudy().stream().map((element) -> modelMapper.map(element, Schedule.class)).collect(Collectors.toList());
         enrollmentDTO.getEnrollmentPs().forEach((element)->{
-                if (scheduleImpl.checkScheduleByRoomName(enrollmentDTO.getRoomName(),element.getScheduleStudy())){
+                if (scheduleImpl.checkScheduleByRoomTHName(element.getRoom(),element.getScheduleStudy())){
                     check.set(true);
-                    return;
                 }
+        });
+        enrollmentDTO.getScheduleStudy().forEach((element)->{
+            if (scheduleImpl.checkScheduleByRoomName(enrollmentDTO.getRoomName(),element)){
+                check.set(true);
+            }
         });
         if (check.get()){
             return "Schedule is duplicate";
@@ -160,6 +176,7 @@ public class EnrollmentImpl implements EnrollmentService {
         // lịch rỗng để khi kiểm tra thì thay đổi lịch
         Schedule exam = scheduleRepository.findById(1).orElse(null);
         enrollment.setExam(exam);
+
         enrollmentRepository.save(enrollment);
         System.out.println(enrollment.getEnrollmentPs());
 

@@ -11,5 +11,6 @@ import java.util.List;
 public interface ScheduleService {
     public boolean checkSchedule(Schedule schedule1,Schedule schedule2);
     public List<ScheduleEnrollmentDTO> getStudentSchedule(String studentID);
-    boolean checkScheduleByRoomName(String roomName, Schedule schedule);
+    public boolean checkScheduleByRoomName(String roomName, ScheduleDTO schedule);
+    public boolean checkScheduleByRoomTHName(String roomName, ScheduleDTO schedule);
 }

@@ -9,4 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
+    List<Schedule> findSchedulesByEnrollmentEnrollmentID(String enrollmentID);
 }

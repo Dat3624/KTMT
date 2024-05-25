@@ -18,7 +18,6 @@ public interface Student_EnrollmentRepository extends JpaRepository<Student_Enro
     public List<Student_Enrollment> findStudent_EnrollmentsByStudentStudentAndEnrollment_SemesterAndEnrollment_Year(Student student, int semester, int year);
     public List<Student_Enrollment> findStudent_EnrollmentsByStudentStudent(Student student);
     public Student_Enrollment findStudent_EnrollmentByStudentStudentAndEnrollment(Student student, Enrollment enrollment);
-    public void deleteStudent_EnrollmentByEnrollmentAndStudent(Enrollment enrollment, InforStudent student);
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM student_enrollment WHERE enrollmentid = :enrollmentId AND studentid = :studentId", nativeQuery = true)

@@ -43,4 +43,5 @@ public class CourseController {
         result.put("result", "C"+(courseImpl.getAllCourses().size() + 1));
         return result;
     }
+
 }

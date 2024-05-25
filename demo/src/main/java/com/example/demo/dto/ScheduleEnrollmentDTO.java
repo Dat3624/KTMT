@@ -12,7 +12,7 @@ import java.util.List;
 public class ScheduleEnrollmentDTO {
     private List<ScheduleDTO> schedules;
     private String nameCourse;
-    private String room;
+    private String roomName;
     private String nameInstructor;
     private String enrollmentID;
     private String nameClass;

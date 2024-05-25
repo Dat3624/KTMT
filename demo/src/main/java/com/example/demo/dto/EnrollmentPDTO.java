@@ -15,7 +15,7 @@ public class EnrollmentPDTO {
     private String name;
     private String room;
     private int quantity;
-    private Schedule scheduleStudy;
+    private ScheduleDTO scheduleStudy;
     private String nameInstructor;
     private String instructorID;
 

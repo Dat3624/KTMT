@@ -1,6 +1,6 @@
 var dkhpAPI = 'http://localhost:8081/dangkyhocphan';
 var studentAPI = 'http://localhost:8081/students';
-var lopHPAPI = 'http://localhost:8081/dangkyhocphan/lophocphan';
+var lopHPAPI = 'http://localhost:8081/admin/monhoc/lophocphan';
 var detailAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/chitietlophocphan';
 var lopHPDaDangKyAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/sinhvien';
 var registerAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/sinhvien/dangky';
@@ -84,7 +84,9 @@ loadListOfCourse();
 
 // chọn môn học để hiển thị danh sách lớp học phần
 function choiceCourse(courseID, courseName) {
-    fetch(lopHPAPI + '?courseID=' + courseID)
+    year = new Date().getFullYear();
+    semester = document.getElementById('semester').value.slice(2, 3);
+    fetch(lopHPAPI + '?courseID=' + courseID + '&semester=' + semester + '&year=' + year)
     .then(function(response) {
         return response.json();
     })
