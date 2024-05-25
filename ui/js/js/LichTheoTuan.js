@@ -148,7 +148,7 @@ function loadSchedule() {
                             cell.innerHTML = content;
                         }
                     } else {
-                        const cells = rows[3].querySelectorAll('td');
+                        const cells = rows[2].querySelectorAll('td');
                         if (cells.length > columnIndex) {
                             const cell = cells[columnIndex];
                             
@@ -182,7 +182,7 @@ function loadSchedule() {
                             cell.innerHTML = '';
                         }
                     } else {
-                        const cells = rows[3].querySelectorAll('td');
+                        const cells = rows[2].querySelectorAll('td');
                         if (cells.length > columnIndex) {
                             const cell = cells[columnIndex];
                             cell.innerHTML = '';
