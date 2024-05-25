@@ -25,6 +25,47 @@ checkbox.addEventListener('change', function() {
     }
 });
 
+// load năm học kì vào thẻ select
+var year = new Date().getFullYear();
+var semester = new Date().getMonth() < 6 ? 1 : 2;
+var yearSemester = document.getElementById('semester');
+for (var i = year; i > year - 3; i--) {
+    var option = document.createElement('option');
+    option.value = i + '-3';
+    option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-2';
+    option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-1';
+    option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+}
+
+// load năm học kì vào thẻ select trong modal thêm lớp học phần
+var yearSemesterDK = document.getElementById('semesterDK');
+console.log(yearSemesterDK);
+for (var i = year; i >= year; i--) {
+    var option = document.createElement('option');
+    option.value = i + '-3';
+    option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
+    yearSemesterDK.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-2';
+    option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
+    yearSemesterDK.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-1';
+    option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
+    yearSemesterDK.appendChild(option);
+}
+
 var courseID_current;
 var courseName_current;
 // load dữ liệu môn học vào bảng
@@ -67,8 +108,11 @@ function loadCourse(majorID) {
 
 // chọn môn học và hiển thị danh sách lớp học phần
 function choiceCourse(courseID, courseName) {
-    year = new Date().getFullYear();
-    semester = document.getElementById('semester').value.slice(2, 3);
+    year = document.getElementById('semester').value.slice(0, 4);
+    console.log(year)
+    semester = document.getElementById('semester').value.slice(5);
+    console.log(semester)
+    console.log(lopHPAPI + '?courseID=' + courseID + '&semester=' + semester + '&year=' + year)
     fetch(lopHPAPI + '?courseID=' + courseID + '&semester=' + semester + '&year=' + year)
     .then(function(response) {
         return response.json();
@@ -455,7 +499,7 @@ function addLHP() {
     var enrollmentID = document.getElementById('enrollmentID').value;
     var name = document.getElementById('name').value;
     var year = document.getElementById('year').value;
-    var semester = document.getElementById('semesterDK').value.slice(2, 3);
+    var semester = document.getElementById('semesterDK').value.slice(5);
     var quantity = document.getElementById('quantity').value;
     var roomName = document.getElementById('roomName').value;
     var instructor = document.getElementById('instructor').value;

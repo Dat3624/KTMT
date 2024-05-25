@@ -39,10 +39,31 @@ fetch(studentAPI + '/' + studentID)
         }
 })
 
+// load năm học kì vào thẻ select
+var year = new Date().getFullYear();
+var semester = new Date().getMonth() < 6 ? 1 : 2;
+var yearSemester = document.getElementById('semester');
+for (var i = year; i > year - 3; i--) {
+    var option = document.createElement('option');
+    option.value = i + '-3';
+    option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-2';
+    option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-1';
+    option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+}
+
 // load danh sách môn học
 function loadListOfCourse() {
     studentID = document.getElementById('sv-mssv').textContent;
-    year = new Date().getFullYear();
+    year = document.getElementById('semester').value.slice(5);
     semester = document.getElementById('semester').value.slice(2, 3);
     fetch(dkhpAPI + '?studentID=' + studentID + '&semester=' + semester + '&year=' + year)
     .then(function (res) {
@@ -84,7 +105,7 @@ loadListOfCourse();
 
 // chọn môn học để hiển thị danh sách lớp học phần
 function choiceCourse(courseID, courseName) {
-    year = new Date().getFullYear();
+    year = document.getElementById('semester').value.slice(5);
     semester = document.getElementById('semester').value.slice(2, 3);
     fetch(lopHPAPI + '?courseID=' + courseID + '&semester=' + semester + '&year=' + year)
     .then(function(response) {
