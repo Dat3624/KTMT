@@ -1,8 +1,21 @@
 var resultAPI = "http://localhost:8081/sinhvien/result/";
+var studentAPI = 'http://localhost:8081/students';
 
 var studentID = localStorage.getItem("studentID");
 
-function result(){
+fetch(studentAPI + '/' + studentID)
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(student) {
+        console.log(student);
+        namNhapHoc = student.academicYear;
+        document.getElementById('user-account-avatar').src = student.img;
+        document.getElementById('user-account-name').textContent = student.name;
+        result(namNhapHoc);
+})
+
+function result(namNhapHoc){
     fetch(resultAPI + studentID)
     .then(function(response) {
         return response.json();
@@ -15,36 +28,39 @@ function result(){
 
         var year = new Date().getFullYear();
         var semester = new Date().getMonth() < 6 ? 1 : 2;
-        for (var i = year; i > year - 3; i--) {
-            var option = document.createElement('option');
-            option.value = i + '-3';
-            option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
-            yearSemester.appendChild(option);
-        
-            var option = document.createElement('option');
-            option.value = i + '-2';
-            option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
-            yearSemester.appendChild(option);
-        
-            var option = document.createElement('option');
-            option.value = i + '-1';
-            option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
-            yearSemester.appendChild(option);
+        for (var i = year - (year - namNhapHoc); i <= year; i++) {
+            for (var j = 1; j <= 3; j++) {
+                const row = tbody.insertRow();
+                let hk = `<tr>
+                    <td colspan="19" class="text-left row-head bold">HK${j} (${i}-${i+1})</td>
+                    </tr>`;
+                row.innerHTML = hk;
+            }
         }
-        const row = tbody.insertRow();
-        let hk = `<tr>
-            <td colspan="19" class="text-left row-head bold">HK2 (2021-2022)</td>
-            </tr>`
-        row.innerHTML = hk;
-
+        
         data.forEach((element, index) => {
-            if(element.semester == 2 && element.year == 2024) {
-                var overallScore = element.overallScore;
+            var status = element.studyStatus;
+            var overallScore = element.overallScore;
+            var midtermScore = element.midtermScore;
+            var finalScore = element.finalScore;
+            // console.log(status);
+            if(status != 'đã thi') {
+                overallScore = '';
+            }
+            // if(element.semester == 2 && element.year == 2024) {
                 var diemChu;
                 var diemBon;
                 var loai;
                 var dat;
-                if(overallScore >= 8.5) {
+                if (overallScore == '') {
+                    midtermScore = '';
+                    finalScore = '';
+                    diemChu = '';
+                    diemBon = '';
+                    loai = '';
+                    dat = '';
+                }
+                else if(overallScore >= 8.5) {
                     diemChu = 'A';
                     diemBon = 4;
                     loai = 'Giỏi';
@@ -97,31 +113,36 @@ function result(){
                         element.practiceScore[i]=""
                     }
                 }
-
-                const row = tbody.insertRow();
-                let diem = `
-                    <td>${index + 1}</td>
-                    <td>${element.enrollmentID}</td>
-                    <td>${element.nameCourse}</td>
-                    <td>${element.credit}</td>
-                    <td>${element.midtermScore}</td>
-                    <td></td>
-                    <td>${element.regularScore[0]}</td>
-                    <td>${element.regularScore[1]}</td>
-                    <td>${element.regularScore[2]}</td>
-                    <td>${element.practiceScore[0]}</td>
-                    <td>${element.practiceScore[1]}</td>
-                    <td>${element.practiceScore[2]}</td>
-                    <td>${element.finalScore}</td>
-                    <td>${element.overallScore}</td>
-                    <td>${diemBon}</td>
-                    <td>${diemChu}</td>
-                    <td>${loai}</td>
-                    <td>${dat}</td>
-                `
-                row.innerHTML = diem;
-            }
+                
+                var rows = tbody.getElementsByTagName('tr');
+                for (var i = 0; i < rows.length; i++) {
+                    if (rows[i].innerText.includes(`HK${element.semester} (${element.year}-${element.year + 1})`)) {
+                        var newRow = tbody.insertRow(i + 1);
+                        newRow.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${element.enrollmentID}</td>
+                            <td>${element.nameCourse}</td>
+                            <td>${element.credit}</td>
+                            <td>${midtermScore}</td>
+                            <td></td>
+                            <td>${element.regularScore[0]}</td>
+                            <td>${element.regularScore[1]}</td>
+                            <td>${element.regularScore[2]}</td>
+                            <td>${element.practiceScore[0]}</td>
+                            <td>${element.practiceScore[1]}</td>
+                            <td>${element.practiceScore[2]}</td>
+                            <td>${finalScore}</td>
+                            <td>${overallScore}</td>
+                            <td>${diemBon}</td>
+                            <td>${diemChu}</td>
+                            <td>${loai}</td>
+                            <td>${dat}</td>
+                        `
+                        break;
+                    }
+                }
+            // }
         });
     });
 }
-result();
+// result();

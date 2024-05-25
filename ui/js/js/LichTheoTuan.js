@@ -1,6 +1,16 @@
 var scheduleAPI = 'http://localhost:8081/students/schedule/'
+var studentAPI = 'http://localhost:8081/students';
 
 var studentID = localStorage.getItem('studentID');
+
+fetch(studentAPI + '/' + studentID)
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(student) {
+        document.getElementById('user-account-avatar').src = student.img;
+        document.getElementById('user-account-name').textContent = student.name;
+})
 
 // Cập nhật ngày hiện tại lên bảng
 function updateDate() {

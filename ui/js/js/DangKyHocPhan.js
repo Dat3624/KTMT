@@ -11,13 +11,13 @@ var studentID = localStorage.getItem("studentID");
 document.getElementById('sv-mssv').textContent = studentID;
 
 // load thông tin sinh viên
-// var namNhapHoc = 0;
+var namNhapHoc;
 fetch(studentAPI + '/' + studentID)
     .then(function(response) {
         return response.json();
     })
     .then(function(student) {
-        // namNhapHoc = student.academicYear;
+        namNhapHoc = student.academicYear;
         document.getElementById('sv-hoten').textContent = student.name;
         const sexText = student.sex ? 'Nam' : 'Nữ';
         document.getElementById('avatar').src = student.img;
@@ -39,16 +39,17 @@ fetch(studentAPI + '/' + studentID)
                 document.getElementById('sv-status').textContent = "Không xác định";
                 break;
         }
-        // loadYearSemester(student.academicYear);
+        loadYearSemester(namNhapHoc);
 
 })
-// console.log(namNhapHoc);
+
 // load năm học kì vào thẻ select
-// function loadYearSemester(namNhapHoc) {
+function loadYearSemester(namNhapHoc) {
+    console.log(namNhapHoc);
     var year = new Date().getFullYear();
     var semester = new Date().getMonth() < 6 ? 1 : 2;
     var yearSemester = document.getElementById('semester');
-    for (var i = year; i > year - 4; i--) {
+    for (var i = year; i > year - (year - namNhapHoc + 1); i--) {
         var option = document.createElement('option');
         option.value = i + '-3';
         option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
@@ -64,7 +65,7 @@ fetch(studentAPI + '/' + studentID)
         option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
         yearSemester.appendChild(option);
     }
-// }
+}
 
 // load danh sách môn học
 function loadListOfCourse() {
