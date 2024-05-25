@@ -2,7 +2,9 @@ package com.example.demo.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 @Getter
 @Setter
@@ -17,4 +19,6 @@ public class ScheduleEnrollmentDTO {
     private String enrollmentID;
     private String nameClass;
     private String note;
+    private int numDate;
+    private LocalDate startDate;
 }

@@ -138,17 +138,17 @@ public class EnrollmentImpl implements EnrollmentService {
         AtomicBoolean check = new AtomicBoolean(false);
         enrollmentDTO.getScheduleStudy().stream().map((element) -> modelMapper.map(element, Schedule.class)).collect(Collectors.toList());
         enrollmentDTO.getEnrollmentPs().forEach((element)->{
-                if (scheduleImpl.checkScheduleByRoomTHName(element.getRoom(),element.getScheduleStudy())){
+                if (scheduleImpl.checkScheduleByRoomTHName(element.getRoom(),element.getScheduleStudy(),enrollmentDTO.getSemester(),enrollmentDTO.getYear(),element.getInstructorID())){
                     check.set(true);
                 }
         });
         enrollmentDTO.getScheduleStudy().forEach((element)->{
-            if (scheduleImpl.checkScheduleByRoomName(enrollmentDTO.getRoomName(),element)){
+            if (scheduleImpl.checkScheduleByRoomName(enrollmentDTO.getRoomName(),element,enrollmentDTO.getSemester(),enrollmentDTO.getYear(),enrollmentDTO.getInstructorID())){
                 check.set(true);
             }
         });
         if (check.get()){
-            return "Schedule is duplicate";
+            return "Schedule is duplicate room";
         }
         Course course = courseRepository.findById(enrollmentDTO.getCourseID()).orElse(null);
         List<Instructor> instructors = enrollmentDTO.getEnrollmentPs().stream().map((element)->{

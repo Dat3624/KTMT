@@ -4,6 +4,7 @@ import com.example.demo.dto.Student_EnrollmentDTO;
 import com.example.demo.entities.*;
 import com.example.demo.repositories.*;
 import com.example.demo.services.CourseService;
+import com.example.demo.services.EnrollmentService;
 import com.example.demo.services.ScheduleService;
 import com.example.demo.services.Student_EnrollmentService;
 import jakarta.transaction.Transactional;
@@ -35,6 +36,8 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
     private ScheduleService scheduleImpl;
     @Autowired
     private EnrollmentPRepository enrollmentPRepository;
+    @Autowired
+    private EnrollmentService enrollmentService;
     @Override
     public String registerEnrollment(Student_EnrollmentDTO studentEnrollmentDTO) {
         // check so luong sinh vien dang ky
@@ -56,7 +59,7 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
             return "Không đủ điều kiện tien quyet";
         }
         //check trung lich
-        String schedule = checkSchedule(studentEnrollmentDTO.getStudentID(),studentEnrollmentDTO.getEnrollmentID(),studentEnrollmentDTO.getCodePractive());
+        String schedule = checkSchedule(studentEnrollmentDTO.getStudentID(),studentEnrollmentDTO.getEnrollmentID(),studentEnrollmentDTO.getCodePractive(),enrollment.getSemester(),enrollment.getYear());
         if(!schedule.isEmpty()){
             return schedule;
         }
@@ -103,7 +106,7 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
     }
 
     @Override
-    public String checkSchedule(String studentID, String EnrollmentID, String enrollmentPID) {
+    public String checkSchedule(String studentID, String EnrollmentID, String enrollmentPID,int semester, int year) {
         AtomicReference<String> rs = new AtomicReference<>("");
         // goi lich hoc cua sinh vien
         Student student = studentRepository.findById(studentID).orElse(null);
@@ -112,7 +115,7 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
             return "";
         }
         Enrollment enrollment = enrollmentRepository.findEnrollmentByEnrollmentID(EnrollmentID);
-        student_enrollments.forEach((element)->{
+        student_enrollmentRepository.findStudent_EnrollmentsByStudentStudentAndEnrollment_SemesterAndEnrollment_Year(student,semester,year).forEach((element)->{
             element.getEnrollment().getScheduleStudy().forEach((element1)->{
                 enrollment.getScheduleStudy().forEach((element2)->{
                     if(!scheduleImpl.checkSchedule(element1, element2)){

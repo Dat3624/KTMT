@@ -5,6 +5,7 @@ import com.example.demo.dto.ScheduleEnrollmentDTO;
 import com.example.demo.entities.Enrollment;
 import com.example.demo.entities.EnrollmentP;
 import com.example.demo.entities.Schedule;
+import com.example.demo.model.Caculator;
 import com.example.demo.repositories.*;
 import com.example.demo.services.ScheduleService;
 import org.modelmapper.ModelMapper;
@@ -57,6 +58,9 @@ public class ScheduleImpl implements ScheduleService {
             scheduleEnrollmentDTO.setNameClass(enrollment.getName());
             scheduleEnrollmentDTO.setRoomName(enrollment.getRoomName());
             scheduleEnrollmentDTO.setNameInstructor(enrollment.getInstuctor().getName());
+            scheduleEnrollmentDTO.setStartDate(enrollment.getDateStart());
+            int numDate = Caculator.caculatorNumDate(enrollment.getScheduleStudy().get(0).getClassesStart(), enrollment.getScheduleStudy().get(0).getClassesEnd(),enrollment.getCourse().getCredits());
+            scheduleEnrollmentDTO.setNumDate(numDate);
             List<ScheduleDTO> scheduleDTOS = new ArrayList<>(enrollment.getScheduleStudy().stream().map((schedule) -> {
                 return modelMapper.map(schedule, ScheduleDTO.class);
             }).toList());
@@ -69,6 +73,7 @@ public class ScheduleImpl implements ScheduleService {
                 scheduleDTO.setIsPractice("Practice");
                 scheduleDTO.setNameInstructor(enrollmentP.getInstructor().getName());
                 scheduleDTOS.add(scheduleDTO);
+
             }
             scheduleEnrollmentDTO.setSchedules(scheduleDTOS);
             return scheduleEnrollmentDTO;
@@ -76,11 +81,18 @@ public class ScheduleImpl implements ScheduleService {
     }
 
     @Override
-    public boolean checkScheduleByRoomName(String roomName, ScheduleDTO schedule) {
+    public boolean checkScheduleByRoomName(String roomName, ScheduleDTO schedule,int semester, int year,String instructorID){
         AtomicBoolean check = new AtomicBoolean(false);
         Schedule scheduleT = modelMapper.map(schedule, Schedule.class);
         enrollmentRepository.findAll().forEach((enrollment) -> {
-            if(enrollment.getRoomName().equals(roomName)){
+            if(enrollment.getRoomName().equals(roomName)&&enrollment.getSemester()==semester&&enrollment.getYear()==year){
+                enrollment.getScheduleStudy().forEach((schedule1) -> {
+                    if(!checkSchedule(schedule1, scheduleT)){
+                        check.set(true);
+                    }
+                });
+            }
+            if (enrollment.getInstuctor().getId().equals(instructorID)){
                 enrollment.getScheduleStudy().forEach((schedule1) -> {
                     if(!checkSchedule(schedule1, scheduleT)){
                         check.set(true);
@@ -92,17 +104,21 @@ public class ScheduleImpl implements ScheduleService {
     }
 
     @Override
-    public boolean checkScheduleByRoomTHName(String roomName, ScheduleDTO schedule) {
+    public boolean checkScheduleByRoomTHName(String roomName, ScheduleDTO schedule, int semester, int year,String instructorID) {
         AtomicBoolean check = new AtomicBoolean(false);
         Schedule scheduleT = modelMapper.map(schedule, Schedule.class);
         enrollmentPRepository.findAll().forEach((enrollmentP) -> {
-            if(enrollmentP.getRoom().equals(roomName)){
+            if(enrollmentP.getRoom().equals(roomName)&&enrollmentP.getEnrollment().getSemester()==semester&&enrollmentP.getEnrollment().getYear()==year){
+                if(!checkSchedule(enrollmentP.getScheduleStudy(), scheduleT)){
+                    check.set(true);
+                }
+            }
+            if (enrollmentP.getInstructor().getId().equals(instructorID)){
                 if(!checkSchedule(enrollmentP.getScheduleStudy(), scheduleT)){
                     check.set(true);
                 }
             }
         });
         return check.get();
-
 }
 }
