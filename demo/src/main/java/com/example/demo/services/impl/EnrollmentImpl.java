@@ -178,7 +178,6 @@ public class EnrollmentImpl implements EnrollmentService {
         enrollment.setExam(exam);
 
         enrollmentRepository.save(enrollment);
-        System.out.println(enrollment.getEnrollmentPs());
 
         return "Add enrollment success";
     }

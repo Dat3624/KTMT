@@ -1,6 +1,60 @@
 var scheduleAPI = 'http://localhost:8081/students/schedule/'
 
 var studentID = localStorage.getItem('studentID');
+var dateFirstWeek ;
+// Cập nhật ngày hiện tại lên bảng
+function updateDate() {
+    var currentDate = new Date();
+    var currentDay = currentDate.getDay();
+    var days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+
+    var firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDay));
+
+    for (var i = 1; i <= 7; i++) {
+        
+        var dayOfWeek = new Date(firstDayOfWeek);
+        dayOfWeek.setDate(firstDayOfWeek.getDate() + i);
+
+        if(i==1){
+            dateFirstWeek = dayOfWeek;
+        }
+        // Định dạng ngày theo dạng 'dd/mm/yyyy'
+        var formattedDate = dayOfWeek.getDate() + '/' + (dayOfWeek.getMonth() + 1) + '/' + dayOfWeek.getFullYear();
+
+        document.querySelector('.fl-table th:nth-child(' + (i + 1) + ') span').textContent = days[i % 7] + ' (' + formattedDate + ')';
+    }
+}
+updateDate();
+
+var currentWeek = 0;
+// Cập nhật ngày theo tuần
+function changeWeek() {
+    var currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() + (currentWeek * 7));
+
+    var currentDay = currentDate.getDay();
+    var days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+
+    var firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDay));
+
+    for (var i = 1; i <= 7; i++) {
+        if(i==1){
+            dateFirstWeek = dayOfWeek;
+            console.log(dateFirstWeek+"1");
+        }
+        var dayOfWeek = new Date(firstDayOfWeek);
+        dayOfWeek.setDate(firstDayOfWeek.getDate() + i);
+
+        var formattedDate = dayOfWeek.getDate() + '/' + (dayOfWeek.getMonth() + 1) + '/' + dayOfWeek.getFullYear();
+
+        document.querySelector('.fl-table th:nth-child(' + (i + 1) + ') span').textContent = days[i % 7] + ' (' + formattedDate + ')';
+
+        if (i === 1) {
+            document.getElementById('dateNgayXemLich').value = formattedDate;
+        }
+    }
+}
+
 
 // load lịch học
 function loadSchedule() {
@@ -13,7 +67,13 @@ function loadSchedule() {
 
         data.forEach(function(item) {
             var schedules = item.schedules;
-
+            var startDate = new Date(item.startDate);
+            console.log(startDate);
+            console.log(dateFirstWeek);
+            if (((startDate.getDay() - dateFirstWeek.getDay())>-6)) {
+                return;
+            }
+            
             var table = document.querySelector('.fl-table');
             var tbody = table.querySelector('tbody');
             
@@ -73,52 +133,9 @@ function loadSchedule() {
 }
 loadSchedule();
 
-// Cập nhật ngày hiện tại lên bảng
-function updateDate() {
-    var currentDate = new Date();
-    var currentDay = currentDate.getDay();
-    var days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
 
-    var firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDay));
 
-    for (var i = 1; i <= 7; i++) {
-        var dayOfWeek = new Date(firstDayOfWeek);
-        dayOfWeek.setDate(firstDayOfWeek.getDate() + i);
 
-        // Định dạng ngày theo dạng 'dd/mm/yyyy'
-        var formattedDate = dayOfWeek.getDate() + '/' + (dayOfWeek.getMonth() + 1) + '/' + dayOfWeek.getFullYear();
-
-        document.querySelector('.fl-table th:nth-child(' + (i + 1) + ') span').textContent = days[i % 7] + ' (' + formattedDate + ')';
-    }
-}
-updateDate();
-
-var currentWeek = 0;
-// Cập nhật ngày theo tuần
-function changeWeek() {
-    var currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + (currentWeek * 7));
-
-    var currentDay = currentDate.getDay();
-    var days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-
-    var firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDay));
-
-    for (var i = 1; i <= 7; i++) {
-        var dayOfWeek = new Date(firstDayOfWeek);
-        dayOfWeek.setDate(firstDayOfWeek.getDate() + i);
-
-        var formattedDate = dayOfWeek.getDate() + '/' + (dayOfWeek.getMonth() + 1) + '/' + dayOfWeek.getFullYear();
-
-        document.querySelector('.fl-table th:nth-child(' + (i + 1) + ') span').textContent = days[i % 7] + ' (' + formattedDate + ')';
-
-        if (i === 1) {
-            document.getElementById('dateNgayXemLich').value = formattedDate;
-        }
-    }
-}
-
-changeWeek();
 
 // Thêm sự kiện click cho các nút
 document.getElementById('btn_HienTai').addEventListener('click', function() {

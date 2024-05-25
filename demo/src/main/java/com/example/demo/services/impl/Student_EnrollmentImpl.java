@@ -47,17 +47,10 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
         }
         // check đieu kien tien quyet
         Student student = studentRepository.findById(studentEnrollmentDTO.getStudentID()).orElse(null);
-        AtomicInteger flag = new AtomicInteger();
-
-        student_enrollmentRepository.findStudent_EnrollmentsByStudentStudent(student).forEach((element)->{
-           if(!checkPrerequisite(element.getStudent().getId(),element.getEnrollment().getCourse().getCourseID())){
-               flag.set(1);
-               return;
+           if(!checkPrerequisite(studentEnrollmentDTO.getStudentID(),enrollment.getCourse().getCourseID())) {
+               return "Không đủ điều kiện tien quyet";
            }
-        });
-        if(flag.get()==1){
-            return "Không đủ điều kiện tien quyet";
-        }
+
         //check trung lich
         String schedule = checkSchedule(studentEnrollmentDTO.getStudentID(),studentEnrollmentDTO.getEnrollmentID(),studentEnrollmentDTO.getCodePractive(),enrollment.getSemester(),enrollment.getYear());
         if(!schedule.isEmpty()){
@@ -78,6 +71,7 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
     @Override
     public boolean checkPrerequisite(String studentID, String courseID) {
         Student student = studentRepository.findById(studentID).orElse(null);
+
         AtomicInteger flag = new AtomicInteger();
 
             courseImpl.getPerquisites(courseID).forEach((element1)->{
@@ -87,7 +81,6 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
                 }else {
                     student_enrollmentRepository.findStudent_EnrollmentsByStudentStudent(student).forEach((element2)->{
                         if (element2==null){
-                            flag.set(1);
                             return;
                         }
                         if(element2.getEnrollment().getCourse().getCourseID().equals(element1.getCourseID())){
@@ -96,9 +89,7 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
                         }
                     });
                 }
-
             });
-
         if (flag.get()==1){
             return true;
         }
@@ -119,7 +110,6 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
             element.getEnrollment().getScheduleStudy().forEach((element1)->{
                 enrollment.getScheduleStudy().forEach((element2)->{
                     if(!scheduleImpl.checkSchedule(element1, element2)){
-                        System.out.println(element2);
                         rs.set("Trùng lịch học với lich của môn "+ element.getEnrollment().getCourse().getName()+" thứ "+ element1.getDayOfWeek() + " từ tiết " + element1.getClassesStart() + " đến " + element1.getClassesEnd());
                         return;
                     }
