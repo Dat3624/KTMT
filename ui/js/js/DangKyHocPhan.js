@@ -11,11 +11,13 @@ var studentID = localStorage.getItem("studentID");
 document.getElementById('sv-mssv').textContent = studentID;
 
 // load thông tin sinh viên
+// var namNhapHoc = 0;
 fetch(studentAPI + '/' + studentID)
     .then(function(response) {
         return response.json();
     })
     .then(function(student) {
+        // namNhapHoc = student.academicYear;
         document.getElementById('sv-hoten').textContent = student.name;
         const sexText = student.sex ? 'Nam' : 'Nữ';
         document.getElementById('avatar').src = student.img;
@@ -37,34 +39,38 @@ fetch(studentAPI + '/' + studentID)
                 document.getElementById('sv-status').textContent = "Không xác định";
                 break;
         }
+        // loadYearSemester(student.academicYear);
+
 })
-
+// console.log(namNhapHoc);
 // load năm học kì vào thẻ select
-var year = new Date().getFullYear();
-var semester = new Date().getMonth() < 6 ? 1 : 2;
-var yearSemester = document.getElementById('semester');
-for (var i = year; i > year - 3; i--) {
-    var option = document.createElement('option');
-    option.value = i + '-3';
-    option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
-    yearSemester.appendChild(option);
-
-    var option = document.createElement('option');
-    option.value = i + '-2';
-    option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
-    yearSemester.appendChild(option);
-
-    var option = document.createElement('option');
-    option.value = i + '-1';
-    option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
-    yearSemester.appendChild(option);
-}
+// function loadYearSemester(namNhapHoc) {
+    var year = new Date().getFullYear();
+    var semester = new Date().getMonth() < 6 ? 1 : 2;
+    var yearSemester = document.getElementById('semester');
+    for (var i = year; i > year - 4; i--) {
+        var option = document.createElement('option');
+        option.value = i + '-3';
+        option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
+        yearSemester.appendChild(option);
+    
+        var option = document.createElement('option');
+        option.value = i + '-2';
+        option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
+        yearSemester.appendChild(option);
+    
+        var option = document.createElement('option');
+        option.value = i + '-1';
+        option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
+        yearSemester.appendChild(option);
+    }
+// }
 
 // load danh sách môn học
 function loadListOfCourse() {
     studentID = document.getElementById('sv-mssv').textContent;
-    year = document.getElementById('semester').value.slice(5);
-    semester = document.getElementById('semester').value.slice(2, 3);
+    year = document.getElementById('semester').value.slice(0, 4);
+    semester = document.getElementById('semester').value.slice(5);
     fetch(dkhpAPI + '?studentID=' + studentID + '&semester=' + semester + '&year=' + year)
     .then(function (res) {
         return res.json();
@@ -285,8 +291,8 @@ var dsHPDaDangKy = [];
 // load danh sách lớp học phần đã đăng ký
 function loadListOfRegisteredClass() {
     studentID = document.getElementById('sv-mssv').textContent;
-    year = new Date().getFullYear();
-    semester = document.getElementById('semester').value.slice(2, 3);
+    year = document.getElementById('semester').value.slice(0, 4);
+    semester = document.getElementById('semester').value.slice(5);
     console.log(lopHPDaDangKyAPI + '?studentID=' + studentID + '&semester=' + semester + '&year=' + year)
     fetch(lopHPDaDangKyAPI + '?studentID=' + studentID + '&semester=' + semester + '&year=' + year)
     .then(function(response) {

@@ -16,13 +16,13 @@ function updateDate() {
     for (var i = 1; i <= 7; i++) {
         var dayOfWeek = new Date(firstDayOfWeek);
         
-        dayOfWeek.setDate(firstDayOfWeek.getDate() + i);
-        console.log(dayOfWeek);
-        
-        if(i == 1) {
+        if(i == 7) {
             firstDay = dayOfWeek;
+            console.log('fd ht ' + firstDay);
         }
-
+        
+        dayOfWeek.setDate(firstDayOfWeek.getDate() + i);
+        
         // Định dạng ngày theo dạng 'dd/mm/yyyy'
         var formattedDate = dayOfWeek.getDate() + '/' + (dayOfWeek.getMonth() + 1) + '/' + dayOfWeek.getFullYear();
 
@@ -48,12 +48,12 @@ function changeWeek() {
 
     for (var i = 1; i <= 7; i++) {
         var dayOfWeek = new Date(firstDayOfWeek);
-        dayOfWeek.setDate(firstDayOfWeek.getDate() + i);
+        if(i == 7) {
+            firstDay = dayOfWeek;
+            console.log('fd cw ' + firstDay);
+        }
 
-        // if(startDate > dayOfWeek) {
-        //     console.log(startDate);
-        //     loadSchedule();
-        // }
+        dayOfWeek.setDate(firstDayOfWeek.getDate() + i);
 
         var formattedDate = dayOfWeek.getDate() + '/' + (dayOfWeek.getMonth() + 1) + '/' + dayOfWeek.getFullYear();
 
@@ -65,8 +65,28 @@ function changeWeek() {
     }
 }
 
+// Thêm sự kiện click cho các nút
+document.getElementById('btn_HienTai').addEventListener('click', function() {
+    currentWeek = 0;
+    changeWeek();
+    loadSchedule();
+});
+
+document.getElementById('btn_TroVe').addEventListener('click', function() {
+    currentWeek--;
+    changeWeek();
+    loadSchedule();
+});
+
+document.getElementById('btn_Tiep').addEventListener('click', function() {
+    currentWeek++;
+    changeWeek();
+    loadSchedule();
+});
+
 // load lịch học
 function loadSchedule() {
+    console.log('fd ' + firstDay);
     fetch(scheduleAPI + studentID)
     .then(function(response) {
         return response.json();
@@ -76,28 +96,23 @@ function loadSchedule() {
 
         data.forEach(function(item) {
             startDate = new Date(item.startDate);
-            // console.log(startDate);
-            console.log(firstDay);
-
-            if(startDate >= firstDay) {
-                return;
-            }
-            
-            var schedules = item.schedules;
 
             var table = document.querySelector('.fl-table');
             var tbody = table.querySelector('tbody');
+        
+            // var numDate = parseInt(item.numDate);
+            var schedules = item.schedules;
             
-            var numDate = parseInt(item.numDate);
+            const rows = tbody.querySelectorAll('tr');
+            if(startDate <= firstDay) {
+                console.log(startDate <= firstDay);
 
-            // for (var i = 0; i < numDate; i++) {
                 schedules.forEach(schedule => {
                     const dayOfWeek = schedule.dayOfWeek;
                     const columnIndex = parseInt(dayOfWeek) - 1;
     
                     const tiet = schedule.classesStart + '-' + schedule.classesEnd;
-    
-                    const rows = tbody.querySelectorAll('tr');
+                    
                     if(tiet == '1-3' || tiet == '4-6') {
                         const cells = rows[0].querySelectorAll('td');
                         if (cells.length > columnIndex) {
@@ -139,7 +154,36 @@ function loadSchedule() {
                         }
                     }
                 });
-            // }
+            } else {
+                schedules.forEach(schedule => {
+                    const dayOfWeek = schedule.dayOfWeek;
+                    const columnIndex = parseInt(dayOfWeek) - 1;
+    
+                    const tiet = schedule.classesStart + '-' + schedule.classesEnd;
+                    
+                    if(tiet == '1-3' || tiet == '4-6') {
+                        const cells = rows[0].querySelectorAll('td');
+                        if (cells.length > columnIndex) {
+                            const cell = cells[columnIndex];
+                            cell.innerHTML = '';
+                        }
+                    } else if(tiet == '7-9' || tiet == '10-12') {
+                        const cells = rows[1].querySelectorAll('td');
+                        if (cells.length > columnIndex) {
+                            const cell = cells[columnIndex];
+                            cell.innerHTML = '';
+                        }
+                    } else {
+                        const cells = rows[3].querySelectorAll('td');
+                        if (cells.length > columnIndex) {
+                            const cell = cells[columnIndex];
+                            cell.innerHTML = '';
+                        }
+                    }
+                });
+            }
+            
+            
 
 
         });
@@ -150,23 +194,3 @@ function loadSchedule() {
 }
 loadSchedule();
 
-// changeWeek();
-
-// Thêm sự kiện click cho các nút
-document.getElementById('btn_HienTai').addEventListener('click', function() {
-    currentWeek = 0;
-    changeWeek();
-    loadSchedule();
-});
-
-document.getElementById('btn_TroVe').addEventListener('click', function() {
-    currentWeek--;
-    changeWeek();
-    loadSchedule();
-});
-
-document.getElementById('btn_Tiep').addEventListener('click', function() {
-    currentWeek++;
-    changeWeek();
-    loadSchedule();
-});

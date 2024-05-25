@@ -13,6 +13,24 @@ function result(){
         var table = document.querySelector('#xemDiem');
         var tbody = table.querySelector('tbody');
 
+        var year = new Date().getFullYear();
+        var semester = new Date().getMonth() < 6 ? 1 : 2;
+        for (var i = year; i > year - 3; i--) {
+            var option = document.createElement('option');
+            option.value = i + '-3';
+            option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
+            yearSemester.appendChild(option);
+        
+            var option = document.createElement('option');
+            option.value = i + '-2';
+            option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
+            yearSemester.appendChild(option);
+        
+            var option = document.createElement('option');
+            option.value = i + '-1';
+            option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
+            yearSemester.appendChild(option);
+        }
         const row = tbody.insertRow();
         let hk = `<tr>
             <td colspan="19" class="text-left row-head bold">HK2 (2021-2022)</td>
