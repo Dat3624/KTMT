@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 public interface EnrollmentService {
 List<EnrollmentDTO> getAllEnrollmentByCourseID(String courseID);
-    EnrollmentDTO getAllEnrollmentById(String enrollmentID);
+EnrollmentDTO getAllEnrollmentById(String enrollmentID);
 List<EnrollmentDTO> getAllEnrollmentByStudentID(String studentID, int semester, int year);
 List<EnrollmentDTO> getAllEnrollmentByCourseIDInSemesterAndYear(String courseID,int semester, int year);
 String addEnrollment(EnrollmentDTO enrollmentDTO);
