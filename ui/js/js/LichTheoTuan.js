@@ -2,9 +2,6 @@ var scheduleAPI = 'http://localhost:8081/students/schedule/'
 
 var studentID = localStorage.getItem('studentID');
 
-var startDate;
-var firstDay;
-
 // Cập nhật ngày hiện tại lên bảng
 function updateDate() {
     var currentDate = new Date();
@@ -193,4 +190,3 @@ function loadSchedule() {
     });
 }
 loadSchedule();
-

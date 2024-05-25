@@ -49,9 +49,6 @@ public class CourseImpl implements CourseService {
         Major major = majorRepository.findById(majorID).orElse(null);
         assert major != null;
         List<Course> courses = major.getCourses();
-        courses.forEach(e->{
-            System.out.println(e.getCourseID());
-        });
         List<Course> elementsRemove = new ArrayList<>();
         AtomicInteger flag = new AtomicInteger();
         courses.forEach((element)->{
@@ -71,7 +68,7 @@ public class CourseImpl implements CourseService {
             if (enrollmentRepository.findEnrollmentsByCourse_CourseID(element.getCourseID()).isEmpty()){
                 elementsRemove.add(element);
             }
-            student_enrollmentRepository.findStudent_EnrollmentsByStudentStudentAndEnrollment_SemesterAndEnrollment_Year(studentRepository.findById(studentID).orElse(null),semester,year).forEach((student_enrollment)->{
+            student_enrollmentRepository.findStudent_EnrollmentsByStudentStudent(studentRepository.findById(studentID).orElse(null)).forEach((student_enrollment)->{
                 if(student_enrollment.getEnrollment().getCourse().getCourseID().equals(element.getCourseID())){
                     elementsRemove.add(element);
                 }
@@ -101,15 +98,19 @@ public class CourseImpl implements CourseService {
 
     @Override
     public List<Course> getPerquisites(String courseID) {
-        return courseRepository.findAll().stream().map((element) -> {
+
+        List<Course> courses = new ArrayList<>();
+         courseRepository.findAll().forEach((element) -> {
             if (element.getCourseAfter() != null) {
-                if (element.getCourseAfter().getCourseID().equals(courseID))
-                    return element;
-                return null;
-            } else {
-                return null;
+                if (element.getCourseAfter().getCourseID().equals(courseID)) {
+                    System.out.println(courseID);
+                    System.out.println(element.getCourseAfter().getCourseID());
+                    courses.add(element);
+                }
             }
-        }).collect(Collectors.toList());
+        });
+        courses.forEach(System.out::println);
+        return courses;
     }
 
     @Override
@@ -130,8 +131,13 @@ public class CourseImpl implements CourseService {
         if (majorRepository.findById(courseDTO.getMajorsID()).orElse(null)==null){
             return "Major not found";
         }
-        if (!Objects.equals(courseDTO.getPrerequisites(), "") && courseRepository.findById(courseDTO.getPrerequisites()).orElse(null)==null){
-            return "Prerequisites not found";
+        if (!Objects.equals(courseDTO.getPrerequisites(), "")){
+            String[] prerequisites = courseDTO.getPrerequisites().split(",");
+            for (String prerequisite : prerequisites) {
+                if (courseRepository.findById(prerequisite).orElse(null)==null){
+                    return "Prerequisites not found";
+                }
+            }
         }
         if (courseDTO.getCredits()<0){
             return "Credits must be positive";
@@ -161,17 +167,22 @@ public class CourseImpl implements CourseService {
     }
     @Transactional
     @Override
-    public boolean updatePrerequisites(String courseID, String prerequisitesID){
+    public void updatePrerequisites(String courseID, String prerequisitesID){
         Course course = courseRepository.findById(courseID).orElse(null);
         if(course==null){
-            return false;
+            return;
         }
-        Course prerequisites = courseRepository.findById(prerequisitesID).orElse(null);
-        if(prerequisites==null){
-            return false;
+        String[] prerequisites = prerequisitesID.split(",");
+
+        for (String prerequisite : prerequisites) {
+            Course course1 = courseRepository.findById(prerequisite).orElse(null);
+            if(course1==null){
+                return;
+            }
+            course.setCourseAfter(course1);
+            courseRepository.saveAndFlush(course);
+            entityManager.flush();
+            entityManager.clear();
         }
-        prerequisites.setCourseAfter(course);
-        courseRepository.saveAndFlush(prerequisites);
-        return true;
     }
 }

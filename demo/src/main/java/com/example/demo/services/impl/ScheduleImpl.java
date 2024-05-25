@@ -37,10 +37,10 @@ public class ScheduleImpl implements ScheduleService {
             return true;
         }else{
             if(schedule1.getClassesEnd()<schedule2.getClassesStart()){
-                System.out.println("a");
+
                 return true;
             } else if (schedule1.getClassesStart()>schedule2.getClassesEnd()){
-                System.out.println("b");
+
                 return true;
             } else{
                 return false;
@@ -60,7 +60,7 @@ public class ScheduleImpl implements ScheduleService {
             scheduleEnrollmentDTO.setNameInstructor(enrollment.getInstuctor().getName());
             scheduleEnrollmentDTO.setStartDate(enrollment.getDateStart());
             int numDate = Caculator.caculatorNumDate(enrollment.getScheduleStudy().get(0).getClassesStart(), enrollment.getScheduleStudy().get(0).getClassesEnd(),enrollment.getCourse().getCredits());
-            scheduleEnrollmentDTO.setNumDate(numDate);
+
             List<ScheduleDTO> scheduleDTOS = new ArrayList<>(enrollment.getScheduleStudy().stream().map((schedule) -> {
                 return modelMapper.map(schedule, ScheduleDTO.class);
             }).toList());
@@ -75,6 +75,7 @@ public class ScheduleImpl implements ScheduleService {
                 scheduleDTOS.add(scheduleDTO);
 
             }
+            scheduleEnrollmentDTO.setEndDate(Caculator.caculatorEndDate(enrollment.getDateStart(), numDate, scheduleDTOS.size()));
             scheduleEnrollmentDTO.setSchedules(scheduleDTOS);
             return scheduleEnrollmentDTO;
         }).toList();

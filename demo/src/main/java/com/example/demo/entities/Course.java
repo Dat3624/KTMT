@@ -41,8 +41,6 @@ public class Course {
                 "courseID='" + courseID + '\'' +
                 ", name='" + name + '\'' +
                 ", credits=" + credits +
-                ", type='" + type + '\'' +
-                ", courseAfter=" + courseAfter +
-                '}';
+                ", type='" + type + '\'';
     }
 }

@@ -30,7 +30,7 @@ public class CourseController {
 @PostMapping("/admin/monhoc")
     public Map<String,Object> addCourse(@RequestBody CourseDTO courseDTO){
         String result = courseImpl.addCourse(courseDTO);
-        if(!courseDTO.getPrerequisites().isEmpty()){
+        if(!courseDTO.getPrerequisites().isEmpty()&&result.equals("success")){
             courseImpl.updatePrerequisites(courseDTO.getCourseID(), courseDTO.getPrerequisites());
         }
         Map<String, Object> map = new HashMap<>();

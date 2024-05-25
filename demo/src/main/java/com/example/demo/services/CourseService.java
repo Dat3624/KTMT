@@ -12,5 +12,5 @@ public interface CourseService {
     List<CourseDTO> getAllCourseByMajor(String majorID);
 
     String addCourse(CourseDTO courseDTO);
-    public boolean updatePrerequisites(String courseID, String prerequisitesID);
+    public void updatePrerequisites(String courseID, String prerequisitesID);
 }

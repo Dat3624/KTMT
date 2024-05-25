@@ -19,6 +19,6 @@ public class ScheduleEnrollmentDTO {
     private String enrollmentID;
     private String nameClass;
     private String note;
-    private int numDate;
+    private LocalDate endDate;
     private LocalDate startDate;
 }
