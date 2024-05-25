@@ -120,7 +120,13 @@ function choiceCourse(courseID, courseName) {
 // lấy danh sách môn học theo học kỳ
 var choiceSemester = document.getElementById("semester");
 choiceSemester.addEventListener("change", function() {
+    var table = document.querySelector('#tb-course');
+    var tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
     loadListOfCourse();
+    var table = document.querySelector('#tb-register');
+    var tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
     loadListOfRegisteredClass();
 });
 
@@ -144,7 +150,7 @@ function choiceClass(enrollmentID) {
             row.insertCell(2).textContent = "";
             row.insertCell(3).textContent = detail.roomName;
             row.insertCell(4).textContent = detail.nameInstuctor;
-            row.insertCell(5).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
+            row.insertCell(5).textContent = detail.dateStart;
             row.classList.add('active');
         }
 
@@ -156,7 +162,7 @@ function choiceClass(enrollmentID) {
             row.insertCell(2).textContent = detail.enrollmentPs[i].name;
             row.insertCell(3).textContent = detail.enrollmentPs[i].room;
             row.insertCell(4).textContent = detail.enrollmentPs[i].nameInstructor;
-            row.insertCell(5).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
+            row.insertCell(5).textContent = detail.dateStart;
         }
     })
 }
@@ -199,7 +205,8 @@ function register() {
     }
 
     var activeRowCount = 0;
-    if (tableDetail.rows.length > 1) {
+    console.log(tableDetail.rows.length);
+    if (tableDetail.rows.length > 2) {
         for (var i = 0; i < tableDetail.rows.length; i++) {
             if (tableDetail.rows[i].classList.contains("active")) {
                 activeRowCount++;
@@ -267,7 +274,6 @@ function loadListOfRegisteredClass() {
         dsHPDaDangKy = registers;
         var table = document.querySelector('#tb-register');
         var tbody = table.querySelector('tbody');
-
         tbody.innerHTML = '';
         
         registers.forEach((register, index) => {
@@ -275,6 +281,7 @@ function loadListOfRegisteredClass() {
 
             const buttonCell = row.insertCell(0);
             const button = document.createElement('button');
+            button.classList.add('btn', 'btn-primary');
             button.textContent = 'Xem';
             button.onclick = () => handleButtonClick(register.enrollmentID, index);
             buttonCell.appendChild(button);
@@ -318,7 +325,7 @@ function handleButtonClick(enrollmentID, index) {
             row.insertCell(1).textContent = "";
             row.insertCell(2).textContent = detail.roomName;
             row.insertCell(3).textContent = detail.nameInstuctor;
-            row.insertCell(4).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
+            row.insertCell(4).textContent = detail.dateStart;
         }
 
         var tableRegister = document.querySelector('#tb-register tbody').rows[index];
@@ -330,14 +337,13 @@ function handleButtonClick(enrollmentID, index) {
                 row.insertCell(1).textContent = detail.enrollmentPs[i].name;
                 row.insertCell(2).textContent = detail.enrollmentPs[i].room;
                 row.insertCell(3).textContent = detail.enrollmentPs[i].nameInstructor;
-                row.insertCell(4).textContent = detail.dateApplyStart + ' - ' + detail.dateApplyEnd;
+                row.insertCell(4).textContent = detail.dateStart;
             }
         }
         
         var cancelButton = document.querySelector('#btn-huy');
         cancelButton.addEventListener('click', function() {
             cancelLHP(currentEnrollmentID);
-            console.log('Hủy học phần');
         });
         $('#myModal').modal('show');
     })
@@ -372,13 +378,16 @@ function cancelLHP(currentEnrollmentID) {
         .then((response) => {
             alert(response.result);
             $('#myModal').modal('hide');
-            loadListOfRegisteredClass();
-            loadListOfCourse();
             var table = document.querySelector('#tb-detail');
             var tbody = table.querySelector('tbody');
             tbody.innerHTML = '';
             var table = document.querySelector('#tb-class');
             var tbody = table.querySelector('tbody');
             tbody.innerHTML = '';
+            var table = document.querySelector('#tb-register');
+            var tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            loadListOfRegisteredClass();
+            loadListOfCourse();
         })
 }

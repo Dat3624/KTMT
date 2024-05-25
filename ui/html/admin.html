@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery-3.6.4.min.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../css/css/base.css">
+    <link rel="stylesheet" href="../css/css/ThemLopHocPhan.css">
+
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <img src="../img/header-dkhp.png" alt="">
+        </div>
+    </header>
+    <div class="container">
+        <div class="main-content">
+            <div class="infor-basic">
+                <div class="infor-basic-content">
+                    <div class="title">
+                        <div class="hello">
+                            <span class="hello-subject">Xin chào!</span>
+                            <h4 id="sv-hoten" class="hello-name bold"></h4>
+                        </div>
+                    </div>
+                    <div class="infor">
+                        <div class="row mt-1">
+                            <label class="col-xs-6">
+                                <span lang="">MSCB:</span>
+                            </label>
+                            <label class="col-xs-6 right">
+                                <span id="" class="bold"></span>
+                            </label>
+                        </div>
+                        <div class="row mt-1">
+                            <label class="col-xs-6 right">
+                                <span id="" class="bold"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="log-out">
+                        <button class="btn-logout bold ">Đăng xuất</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="main">
+            <div class="subtitle mt-4 bg-light">
+                <p class="bold">CÁC MÔN HỌC</p>
+            </div>
+            <div class="option d-flex justify-content-around align-items-center">
+                <div class="register">
+                    <label class="mr-5 text-dark bold" for="chuyennganh">Chuyên ngành</label>
+                    <select id="major" class="register-btn" name="chuyennganh">
+                        <option value="" disabled selected>Chọn chuyên ngành</option>
+                    </select>
+                </div>
+            </div>
+            <div class="button-container">
+                <button data-toggle="modal" data-target="#myModal" class="btn-logout bold">Thêm môn học</button>
+            </div>
+            <div class="tb-course">
+                <table id="tb-course" class="my-table table table-bordered">
+                    <thead class="header-table">
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã HP</th>
+                            <th>Tên môn học</th>
+                            <th>TC</th>
+                            <th>Loại môn học</th>
+                            <th>Học phần: tiên quyết</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="subtitle mt-4 bg-light">
+                <p class="bold">TẠO LỚP HỌC PHẦN</p>
+            </div>
+            <div class="option d-flex justify-content-around align-items-center">
+                <div class="register">
+                    <label class="mr-5 text-dark bold" for="dangky">Đợt đăng ký</label>
+                    <select id="semester" class="register-btn" name="dangky">
+                        <option value="HK3 (2024-2025)">HK3 (2024-2025)</option>
+                        <option value="HK2 (2024-2025)">HK2 (2024-2025)</option>
+                        <option value="HK1 (2024-2025)">HK1 (2024-2025)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="button-container">
+                <button data-toggle="modal" data-target="#themLHP" class="btn-logout bold mr-5">Thêm lớp học phần</button>
+                <p class="ml-5">Thay đổi trạng thái lớp học phần</p>
+                <select name="status" id="statusLHP" class="register-btn">
+                    <option value="" disabled selected>Chọn trạng thái</option>
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="INACTIVE">INACTIVE</option>
+                    <option value="FINISHED">FINISHED</option>
+                </select>
+            </div>
+            <div class="tb-class">
+                <table id="tb-class" class="my-table table table-bordered">
+                    <thead class="header-table">
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã LHP</th>
+                            <th>Tên lớp học phần</th>
+                            <th>Lớp dự kiến</th>
+                            <th>Sĩ số tối đa</th>
+                            <th>Đã đăng ký</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="subtitle mt-4 bg-light">
+                <p class="bold">CHI TIẾT LỚP HỌC PHẦN</p>
+            </div>
+            <div class="tb-detail">
+                <table id="tb-detail" class="my-table table table-bordered">
+                    <thead class="header-table">
+                        <tr>
+                            <th>STT</th>
+                            <th>Lịch học</th>
+                            <th>Nhóm TH</th>
+                            <th>Phòng</th>
+                            <th>Giảng viên</th>
+                            <th>Thời gian</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="h2_modal bold">Thông tin môn học</h2>
+                    <span class="close" data-dismiss="modal">&times;</span>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="courseID">Mã Môn Học:</label>
+                        <div class="row form-group">
+                            <input type="text" class="form-control col-7 ml-2" id="courseID" readonly><br>
+                            <button class="btn alert-danger col-4 ml-3" onclick="taoMaCourse()">Tạo mã môn</button>
+                        </div>
+
+                        <label for="courseName">Tên Môn Học:</label>
+                        <input type="text" class="form-control" id="courseName" required="required"><br>
+
+                        <label for="credits">Số Tín Chỉ:</label>
+                        <input type="number" class="form-control" id="credits" required><br>
+
+                        <label for="type">Loại Môn Học:</label>
+                        <select id="type" class="form-control" required>
+                            <option value="Bắt buộc">Bắt buộc</option>
+                            <option value="Tự chọn">Tự chọn</option>
+                        </select><br>
+
+
+                        <label for="prerequisiteRelationship">Mối quan hệ tiên quyết:</label>
+                        <div class="">
+                            <div class="checkbox row">
+                                <label class="col-5">
+                                    <input type="checkbox" id="tienQuyet" name="prerequisiteRelationship" value="b">
+                                    Tiên quyết
+                                </label>
+                                <div class="input-group col-7" id="tienQuyetInputDiv" style="display: none;">
+                                    <span class="input-group-addon">Mã môn học:</span>
+                                    <input type="text" id="tienQuyetMaMonHoc" name="tienQuyetMaMonHoc">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-logout bold" id="submitButton" onclick="addCourse()">Thêm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="themLHP">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="h2_modal bold">Thông tin lớp học phần</h2>
+                    <span class="close" data-dismiss="modal">&times;</span>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row form-group">
+                        <div class="col-1">
+                            <span>Mã LHP</span>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="txtMa" id="enrollmentID" readonly>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-danger" onclick="taoMaLHP()">Tạo mã</button>
+                        </div>
+                        <div class="col-1">
+                            <span>Tên LHP</span>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="txtMa" id="name" readonly>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-danger" onclick="taoTenLHP()">Tạo tên</button>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-2">
+                            <span>Năm</span>
+                        </div>
+                        <div class="col-2">
+                            <input class="form-control" type="text" name="txtMa" id="year" >
+                        </div>
+                        <div class="col-2">
+                            <span>Học kỳ</span>
+                        </div>
+                        <div class="col-2">
+                            <select name="" id="semesterDK" class="register-btn">
+                                <option value="" disabled selected>Chọn học kỳ</option>
+                                <option value="HK1">HK1</option>
+                                <option value="HK2">HK2</option>
+                                <option value="HK3">HK3</option>
+                            </select>
+                            
+                        </div>
+                        <div class="col-2">
+                            <span>Sĩ số tối đa</span>
+                        </div>
+                        <div class="col-2">
+                            <input class="form-control" type="text" name="" id="quantity" >
+                        </div>
+                        
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-2">
+                            <span>Phòng</span>
+                        </div>
+                        <div class="col-2">
+                            <input class="form-control" type="text" name="" id="roomName">
+                        </div>
+                        <div class="col-1">
+                            <span>Giảng viên</span>
+                        </div>
+                        <div class="col-3">
+                            <select name="" id="instructor" class="register-btn">
+                                <option value="" disabled selected>Chọn giảng viên</option>
+                            </select>
+                        </div>
+                        <div class="col-1">
+                            <span>Trạng thái</span>
+                        </div>
+                        <div class="col-3">
+                            <select name="" id="status" class="register-btn">
+                                <option value="" disabled selected>Chọn trạng thái</option>
+                                <option value="ACTIVE">ACTIVE</option>
+                                <option value="INACTIVE">INACTIVE</option>
+                                <option value="FINISHED">FINISHED</option>
+                            </select>
+                        </div>
+                    </div>              
+                    <div class="row form-group">
+                        <div class="col-3">
+                            <span>Ngày bắt đầu học</span>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="ngay" placeholder="ngày">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="thang" placeholder="tháng">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="nam" placeholder="năm">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-3">
+                            <span>Ngày bắt đầu đăng ký</span>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="ngay1" placeholder="ngày">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="thang1" placeholder="tháng">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="nam1" placeholder="năm">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-3">
+                            <span>Ngày kết thúc đăng ký</span>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="ngay2" placeholder="ngày">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="thang2" placeholder="tháng">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="nam2" placeholder="năm">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-1">
+                            <span>Lịch học LT</span>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="thu" placeholder="thứ">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="tietBatDau" placeholder="tiết bắt đầu">
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" type="text" name="" id="tietKetThuc" placeholder="tiết kết thúc">
+                        </div>
+                        <div class="col-1">
+                            <input type="button" class="btn btn-success" value="Thêm" onclick="addScheduleStudy()">
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <input class="form-control" type="text" name="" id="scheduleStudy" >
+                    </div>
+                    <div class="checkbox row form-group">
+                        <label class="col-5">
+                            <input type="checkbox" id="thuchanh" name="" value="b">
+                            Thực hành
+                        </label>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-1" id="hienThi1" style="display: none;">
+                            <span>Phòng</span>
+                        </div>
+                        <div class="col-2" id="hienThi2" style="display: none;">
+                            <input class="form-control" type="text" name="" id="phongTH">
+                        </div>
+                        <div class="col-2" id="hienThi3" style="display: none;">
+                            <span>Sĩ số tối đa</span>
+                        </div>
+                        <div class="col-2" id="hienThi4" style="display: none;">
+                            <input class="form-control" type="text" name="" id="siSoTH" >
+                        </div>
+                        <div class="col-2" id="hienThi11" style="display: none;">
+                            <span>Giảng viên</span>
+                        </div>
+                        <div class="col-3" id="hienThi12" style="display: none;">
+                            <select name="" id="instructorTH" class="register-btn">
+                                <option value="" disabled selected>Chọn giảng viên</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-1" id="hienThi5" style="display: none;">
+                            <span>Lịch học TH</span>
+                        </div>
+                        <div class="col-3" id="hienThi6" style="display: none;">
+                            <input class="form-control" type="text" name="" id="thuTH" placeholder="thứ">
+                        </div>
+                        <div class="col-3" id="hienThi7" style="display: none;">
+                            <input class="form-control" type="text" name="" id="tietBatDauTH" placeholder="tiết bắt đầu">
+                        </div>
+                        <div class="col-3" id="hienThi8" style="display: none;">
+                            <input class="form-control" type="text" name="" id="tietKetThucTH" placeholder="tiết kết thúc">
+                        </div>
+                        <div class="col-1" id="hienThi9" style="display: none;">
+                            <input type="button" class="btn btn-success" value="Thêm" onclick="addPractice()">
+                        </div>
+                    </div>
+                    <div class="row form-group" id="hienThi10" style="display: none;">
+                        <input class="form-control" type="text" name="" id="practice" >
+                    </div>
+                    
+                </div>   
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-logout bold" id="submitButton" onclick="addLHP()">Thêm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="footer">
+            <div class="row footer-content">
+                <div class="col-md-10">
+                    <p class="bold">TRƯỜNG ĐẠI HỌC CÔNG NGHIỆP TP.HỒ CHÍ MINH</p>
+                    <p>Địa chỉ: Số 12 Nguyễn Văn Bảo, Phường 4, Quận Gò Vấp, Thành phố Hồ Chí Minh</p>
+                    <p>Điện thoại: 0283.8940 390</p>
+                    <p>Fax: 0283 9940 954</p>
+                    <p>Email: dhcn@iuh.edu.vn</p>
+                </div>
+                <div class="col-md-2">
+                    <p>Thống kê truy cập</p>
+                    <p>Lượt truy cập: 123456</p>
+                    <p>Đang online: 1</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Bản quyền 2018 - Trường Đại học Công Nghiệp TP.Hồ Chí Minh</p>
+        </div>
+    </div>
+
+    <script src="../js/js/admin.js"></script>
+</body>
+
+</html>
