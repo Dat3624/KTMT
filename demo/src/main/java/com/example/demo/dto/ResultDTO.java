@@ -21,6 +21,7 @@ public class ResultDTO {
     private int year;
     private String enrollmentID;
     private int credit;
+    private String studyStatus;
     public ResultDTO() {
     }
 

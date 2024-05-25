@@ -184,8 +184,9 @@ public class EnrollmentImpl implements EnrollmentService {
 
     @Override
     public String getEnrollmentID(String courseID) {
-       int slEnrollment = enrollmentRepository.findEnrollmentsByCourse_CourseID(courseID).size();
-         return courseID.substring(1) + "00" + (slEnrollment + 1);
+       String enrollmentIDMax = enrollmentRepository.getEnrollmentID(courseID);
+       int idMax = Integer.parseInt(enrollmentIDMax.substring(3));
+         return courseID.substring(1) + "00" + (idMax + 1);
     }
 
     @Override

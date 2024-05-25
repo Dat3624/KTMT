@@ -98,18 +98,14 @@ public class CourseImpl implements CourseService {
 
     @Override
     public List<Course> getPerquisites(String courseID) {
-
         List<Course> courses = new ArrayList<>();
          courseRepository.findAll().forEach((element) -> {
             if (element.getCourseAfter() != null) {
                 if (element.getCourseAfter().getCourseID().equals(courseID)) {
-                    System.out.println(courseID);
-                    System.out.println(element.getCourseAfter().getCourseID());
                     courses.add(element);
                 }
             }
         });
-        courses.forEach(System.out::println);
         return courses;
     }
 

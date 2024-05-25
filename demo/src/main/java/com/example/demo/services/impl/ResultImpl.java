@@ -31,10 +31,12 @@ public class ResultImpl implements ResultService {
         return student_enrollmentRepository.findStudent_EnrollmentsByStudentStudent(studentRepository.findStudentById(studentID)).stream().map((student_enrollment) ->{
             Enrollment enrollment = enrollmentRepository.findEnrollmentByEnrollmentID(student_enrollment.getEnrollment().getEnrollmentID());
             String nameCourse = enrollment.getCourse().getName();
+
             int semester = enrollment.getSemester();
             int year = enrollment.getYear();
             int credit = enrollment.getCourse().getCredits();
             ResultDTO resultDTO= modelMapper.map(student_enrollment.getResult(), ResultDTO.class);
+            resultDTO.setStudyStatus(student_enrollment.getStudyStatus());
             resultDTO.setNameCourse(nameCourse);
             resultDTO.setSemester(semester);
             resultDTO.setYear(year);

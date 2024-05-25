@@ -20,8 +20,8 @@ public class Student_EnrollmentDTO {
 
     public Student_EnrollmentDTO() {
         this.note= "khong";
-        this.paymentStatus = "chua hoan thanh";
-        this.studyStatus ="duoc phep thi";
+        this.paymentStatus = "chưa hoàn thành";
+        this.studyStatus ="không được phép thi";
         this.processStudy = 0;
     }
 }

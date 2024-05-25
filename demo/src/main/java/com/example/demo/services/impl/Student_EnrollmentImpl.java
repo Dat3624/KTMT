@@ -71,24 +71,19 @@ public class Student_EnrollmentImpl implements Student_EnrollmentService {
     @Override
     public boolean checkPrerequisite(String studentID, String courseID) {
         Student student = studentRepository.findById(studentID).orElse(null);
-
         AtomicInteger flag = new AtomicInteger();
-
-            courseImpl.getPerquisites(courseID).forEach((element1)->{
-                if (element1==null){
-                    flag.set(1);
-                    return;
-                }else {
+        List<Course> courses = courseImpl.getPerquisites(courseID);
+        if(courses.isEmpty()){
+            return true;
+        }
+           courses.forEach((element1)->{
                     student_enrollmentRepository.findStudent_EnrollmentsByStudentStudent(student).forEach((element2)->{
-                        if (element2==null){
-                            return;
-                        }
                         if(element2.getEnrollment().getCourse().getCourseID().equals(element1.getCourseID())){
                             flag.set(1);
                             return;
                         }
                     });
-                }
+
             });
         if (flag.get()==1){
             return true;
