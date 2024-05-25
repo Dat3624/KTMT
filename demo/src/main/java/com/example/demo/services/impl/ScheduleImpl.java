@@ -55,19 +55,20 @@ public class ScheduleImpl implements ScheduleService {
             scheduleEnrollmentDTO.setEnrollmentID(student_enrollment.getEnrollment().getEnrollmentID());
             scheduleEnrollmentDTO.setNameCourse(enrollment.getCourse().getName());
             scheduleEnrollmentDTO.setNameClass(enrollment.getName());
-            scheduleEnrollmentDTO.setRoom(enrollment.getRoomName());
+            scheduleEnrollmentDTO.setRoomName(enrollment.getRoomName());
             scheduleEnrollmentDTO.setNameInstructor(enrollment.getInstuctor().getName());
             List<ScheduleDTO> scheduleDTOS = new ArrayList<>(enrollment.getScheduleStudy().stream().map((schedule) -> {
                 return modelMapper.map(schedule, ScheduleDTO.class);
             }).toList());
             if(!student_enrollment.getCodePractive().equals("")){
                 EnrollmentP enrollmentP = enrollmentPRepository.findById(student_enrollment.getCodePractive()).orElse(null);
-              Schedule sPractice = enrollmentP.getScheduleStudy();
+                Schedule sPractice = enrollmentP.getScheduleStudy();
+
                 ScheduleDTO scheduleDTO = modelMapper.map(sPractice, ScheduleDTO.class);
+                scheduleDTO.setRoomName(enrollmentP.getRoom());
                 scheduleDTO.setIsPractice("Practice");
                 scheduleDTO.setNameInstructor(enrollmentP.getInstructor().getName());
                 scheduleDTOS.add(scheduleDTO);
-
             }
             scheduleEnrollmentDTO.setSchedules(scheduleDTOS);
             return scheduleEnrollmentDTO;
@@ -75,22 +76,32 @@ public class ScheduleImpl implements ScheduleService {
     }
 
     @Override
-    public boolean checkScheduleByRoomName(String roomName, Schedule schedule) {
+    public boolean checkScheduleByRoomName(String roomName, ScheduleDTO schedule) {
         AtomicBoolean check = new AtomicBoolean(false);
-        scheduleRepository.findAll().forEach((element)->{
-                if(!checkSchedule(element,schedule)){
-                    enrollmentRepository.findAll().forEach((enrollment)->{
-                        enrollment.getScheduleStudy().forEach((schedule1)->{
-                            if(schedule1.getScheduleID() == element.getScheduleID()){
-                                if(enrollment.getRoomName().equals(roomName)){
-                                    check.set(true);
-                                }
-                            }
-
-                    });
+        Schedule scheduleT = modelMapper.map(schedule, Schedule.class);
+        enrollmentRepository.findAll().forEach((enrollment) -> {
+            if(enrollment.getRoomName().equals(roomName)){
+                enrollment.getScheduleStudy().forEach((schedule1) -> {
+                    if(!checkSchedule(schedule1, scheduleT)){
+                        check.set(true);
+                    }
                 });
-        }
-    });
+            }
+        });
+        return check.get();
+    }
+
+    @Override
+    public boolean checkScheduleByRoomTHName(String roomName, ScheduleDTO schedule) {
+        AtomicBoolean check = new AtomicBoolean(false);
+        Schedule scheduleT = modelMapper.map(schedule, Schedule.class);
+        enrollmentPRepository.findAll().forEach((enrollmentP) -> {
+            if(enrollmentP.getRoom().equals(roomName)){
+                if(!checkSchedule(enrollmentP.getScheduleStudy(), scheduleT)){
+                    check.set(true);
+                }
+            }
+        });
         return check.get();
 
 }

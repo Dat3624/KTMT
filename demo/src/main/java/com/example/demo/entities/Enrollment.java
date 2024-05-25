@@ -9,13 +9,13 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Setter
+@Getter
 @ToString
 @Table(name = "enrollments")
 public class Enrollment {
     @Id
-    @Column(name = "enrollmentID", nullable = false)
+    @Column(name = "enrollmentID", nullable = false,unique = true)
     private String enrollmentID;
     @Column(name = "name",columnDefinition = "nvarchar(50)",nullable = false)
     private String name;
@@ -39,7 +39,7 @@ public class Enrollment {
     private List<Schedule> scheduleStudy;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "scheduleID", unique = true, nullable = false)
+    @JoinColumn(name = "scheduleID", nullable = false)
     private Schedule exam;
 
     @OneToMany(mappedBy = "enrollment",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -55,4 +55,6 @@ public class Enrollment {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id", nullable = false)
     private Instructor instuctor;
+
+
 }

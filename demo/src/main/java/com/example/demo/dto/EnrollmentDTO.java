@@ -24,9 +24,9 @@ public class EnrollmentDTO {
     private LocalDate dateApplyStart;
     private LocalDate dateApplyEnd;
     private String courseID;
-    private Schedule exam;
+    private ScheduleDTO exam;
     private EnrollmentStatus status;
-    private List<Schedule> scheduleStudy;
+    private List<ScheduleDTO> scheduleStudy;
     private List<EnrollmentPDTO> enrollmentPs;
     private int credit;
     private String instructorID;

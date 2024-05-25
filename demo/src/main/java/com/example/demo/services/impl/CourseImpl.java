@@ -3,7 +3,6 @@ package com.example.demo.services.impl;
 import com.example.demo.dto.CourseDTO;
 import com.example.demo.entities.Course;
 import com.example.demo.entities.Major;
-import com.example.demo.entities.Student_Enrollment;
 import com.example.demo.repositories.*;
 import com.example.demo.services.CourseService;
 import jakarta.persistence.EntityManager;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +41,7 @@ public class CourseImpl implements CourseService {
 
     @Override
     public List<CourseDTO> getAllCoursesOfMajorInSemester(String studentID, int semester, int year) {
+        // Check if student exists
         if(studentRepository.findById(studentID).orElse(null)==null){
             return null;
         }
@@ -52,12 +53,21 @@ public class CourseImpl implements CourseService {
             System.out.println(e.getCourseID());
         });
         List<Course> elementsRemove = new ArrayList<>();
+        AtomicInteger flag = new AtomicInteger();
         courses.forEach((element)->{
             enrollmentRepository.findEnrollmentsByCourse_CourseID(element.getCourseID()).forEach((enrollment)->{
-                if(enrollment.getSemester()!=semester || enrollment.getYear()!=year){
+
+                if((enrollment.getSemester()!=semester || enrollment.getYear()!=year)&& flag.get() ==0&&!elementsRemove.contains(element)){
                     elementsRemove.add(element);
+
+                }
+                if(enrollment.getSemester()==semester && enrollment.getYear()==year){
+                    elementsRemove.remove(element);
+
+                    flag.set(1);
                 }
             });
+            flag.set(0);
             if (enrollmentRepository.findEnrollmentsByCourse_CourseID(element.getCourseID()).isEmpty()){
                 elementsRemove.add(element);
             }
@@ -128,6 +138,16 @@ public class CourseImpl implements CourseService {
         }
         if (courseDTO.getType().isEmpty()){
             return "Type must not be empty";
+        }
+        if (courseRepository.findByName(courseDTO.getName())!=null){
+            Course c = courseRepository.findByName(courseDTO.getName());
+            List<Major> majors = new ArrayList<>(c.getMajors());
+            majors.add(majorRepository.findById(courseDTO.getMajorsID()).orElse(null));
+            c.setMajors(majors);
+            courseRepository.saveAndFlush(c);
+            entityManager.flush();
+            entityManager.clear();
+            return "Course already exists in another major, so add this major to the course";
         }
         Course course = modelMapper.map(courseDTO, Course.class);
 
