@@ -9,6 +9,7 @@ var maCourseAPI = 'http://localhost:8081/admin/monhoc/lophocphan/mamonhoc';
 var addClassAPI = 'http://localhost:8081/admin/monhoc/themlophocphan';
 var detailClassAPI = 'http://localhost:8081/dangkyhocphan/lophocphan/chitietlophocphan?enrollmentID=';
 var statusClassAPI = 'http://localhost:8081/admin/monhoc/lophocphan/capnhattrangthai';
+var deleteClassAPI = 'http://localhost:8081/admin/monhoc/lophocphan/xoalophocphan'
 
 // xử lý sự kiện khi chọn checkbox tiên quyết
 var checkbox = document.getElementById('tienQuyet');
@@ -23,6 +24,47 @@ checkbox.addEventListener('change', function() {
         prerequisite_global = '';
     }
 });
+
+// load năm học kì vào thẻ select
+var year = new Date().getFullYear();
+var semester = new Date().getMonth() < 6 ? 1 : 2;
+var yearSemester = document.getElementById('semester');
+for (var i = year; i > year - 3; i--) {
+    var option = document.createElement('option');
+    option.value = i + '-3';
+    option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-2';
+    option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-1';
+    option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
+    yearSemester.appendChild(option);
+}
+
+// load năm học kì vào thẻ select trong modal thêm lớp học phần
+var yearSemesterDK = document.getElementById('semesterDK');
+console.log(yearSemesterDK);
+for (var i = year; i >= year; i--) {
+    var option = document.createElement('option');
+    option.value = i + '-3';
+    option.text = 'HK3 (' + i + '-' + (i + 1) + ')';
+    yearSemesterDK.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-2';
+    option.text = 'HK2 (' + i + '-' + (i + 1) + ')';
+    yearSemesterDK.appendChild(option);
+
+    var option = document.createElement('option');
+    option.value = i + '-1';
+    option.text = 'HK1 (' + i + '-' + (i + 1) + ')';
+    yearSemesterDK.appendChild(option);
+}
 
 var courseID_current;
 var courseName_current;
@@ -66,8 +108,11 @@ function loadCourse(majorID) {
 
 // chọn môn học và hiển thị danh sách lớp học phần
 function choiceCourse(courseID, courseName) {
-    year = new Date().getFullYear();
-    semester = document.getElementById('semester').value.slice(2, 3);
+    year = document.getElementById('semester').value.slice(0, 4);
+    console.log(year)
+    semester = document.getElementById('semester').value.slice(5);
+    console.log(semester)
+    console.log(lopHPAPI + '?courseID=' + courseID + '&semester=' + semester + '&year=' + year)
     fetch(lopHPAPI + '?courseID=' + courseID + '&semester=' + semester + '&year=' + year)
     .then(function(response) {
         return response.json();
@@ -87,6 +132,13 @@ function choiceCourse(courseID, courseName) {
             row.insertCell(4).textContent = lop.quantity;
             row.insertCell(5).textContent = lop.quantityApply;
             row.insertCell(6).textContent = lop.status;
+
+            const buttonCell = row.insertCell(7);
+            const button = document.createElement('button');
+            button.classList.add('btn', 'btn-danger');
+            button.textContent = 'Xóa';
+            buttonCell.appendChild(button);
+            button.onclick = () => deleteClass(lop.enrollmentID);
 
             row.addEventListener('click', function() {
                 var prevActiveRow = table.querySelector('.active');
@@ -447,7 +499,7 @@ function addLHP() {
     var enrollmentID = document.getElementById('enrollmentID').value;
     var name = document.getElementById('name').value;
     var year = document.getElementById('year').value;
-    var semester = document.getElementById('semesterDK').value.slice(2, 3);
+    var semester = document.getElementById('semesterDK').value.slice(5);
     var quantity = document.getElementById('quantity').value;
     var roomName = document.getElementById('roomName').value;
     var instructor = document.getElementById('instructor').value;
@@ -547,7 +599,8 @@ function choiceClass(enrollmentID) {
 
         for (var i = 0; i < detail.scheduleStudy.length; i++) {
             const row = tbody.insertRow();
-            row.insertCell(0).textContent = i + 1;
+
+            row.insertCell().textContent = i + 1;
             row.insertCell(1).textContent = 'LT - Thứ ' + detail.scheduleStudy[i].dayOfWeek + ' (T' + detail.scheduleStudy[i].classesStart + ' - T' + detail.scheduleStudy[i].classesEnd + ')';
             row.insertCell(2).textContent = "";
             row.insertCell(3).textContent = detail.roomName;
@@ -603,3 +656,31 @@ var choiceStatus = document.getElementById('statusLHP');
 choiceStatus.addEventListener('change', function() {
     changeStatus(choiceStatus.value);
 });
+
+function deleteClass(enrollmentID) {
+    var enrollment = {
+        "enrollmentID": enrollmentID
+    }
+    console.log(enrollment);
+
+    fetch(deleteClassAPI, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(enrollment)
+    })
+        .then((res) => {
+            return res.json();
+        })
+        .then((response) => {
+            alert(response.result);
+            var table = document.querySelector('#tb-class');
+            var tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            var table = document.querySelector('#tb-detail');
+            var tbody = table.querySelector('tbody');
+            tbody.innerHTML = '';
+            choiceCourse(courseID_current, courseName_current);
+        })
+}
