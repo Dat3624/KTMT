@@ -93,6 +93,7 @@ function loadSchedule() {
 
         data.forEach(function(item) {
             startDate = new Date(item.startDate);
+            endDate = new Date(item.endDate);
 
             var table = document.querySelector('.fl-table');
             var tbody = table.querySelector('tbody');
@@ -101,7 +102,7 @@ function loadSchedule() {
             var schedules = item.schedules;
             
             const rows = tbody.querySelectorAll('tr');
-            if(startDate <= firstDay) {
+            if(startDate <= firstDay && endDate >= firstDay) {
                 console.log(startDate <= firstDay);
 
                 schedules.forEach(schedule => {
@@ -180,9 +181,6 @@ function loadSchedule() {
                 });
             }
             
-            
-
-
         });
     })
     .catch(error => {
