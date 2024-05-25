@@ -89,7 +89,7 @@ function choiceCourse(courseID, courseName) {
         return response.json();
     })
     .then(function(classes) {
-        
+        console.log(classes);
         var table = document.querySelector('#tb-class');
         var tbody = table.querySelector('tbody');
 
@@ -205,7 +205,6 @@ function register() {
     }
 
     var activeRowCount = 0;
-    console.log(tableDetail.rows.length);
     if (tableDetail.rows.length > 2) {
         for (var i = 0; i < tableDetail.rows.length; i++) {
             if (tableDetail.rows[i].classList.contains("active")) {
