@@ -111,8 +111,8 @@ loadListOfCourse();
 
 // chọn môn học để hiển thị danh sách lớp học phần
 function choiceCourse(courseID, courseName) {
-    year = document.getElementById('semester').value.slice(5);
-    semester = document.getElementById('semester').value.slice(2, 3);
+    year = document.getElementById('semester').value.slice(0, 4);
+    semester = document.getElementById('semester').value.slice(5);
     fetch(lopHPAPI + '?courseID=' + courseID + '&semester=' + semester + '&year=' + year)
     .then(function(response) {
         return response.json();
@@ -157,6 +157,12 @@ choiceSemester.addEventListener("change", function() {
     var tbody = table.querySelector('tbody');
     tbody.innerHTML = '';
     loadListOfRegisteredClass();
+    var table = document.querySelector('#tb-detail');
+    var tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+    var table = document.querySelector('#tb-class');
+    var tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
 });
 
 var thucHanh = [];
