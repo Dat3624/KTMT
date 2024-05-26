@@ -90,7 +90,6 @@ document.getElementById('btn_Tiep').addEventListener('click', function() {
     changeWeek();
     loadSchedule();
 });
-
 // load lịch học
 function loadSchedule() {
     console.log('fd ' + firstDay);
@@ -151,8 +150,7 @@ function loadSchedule() {
                         const cells = rows[3].querySelectorAll('td');
                         if (cells.length > columnIndex) {
                             const cell = cells[columnIndex];
-                            
-                            let content = `<div class = "content color-lichhoc text-left"><b>${item.nameCourse}</b><br>`;
+let content = `<div class = "content color-lichhoc text-left"><b>${item.nameCourse}</b><br>`;
                             content += `${item.nameClass} - ${item.enrollmentID}<br>`;
                             content += `Tiết: ${schedule.classesStart} - ${schedule.classesEnd}<br>`;
                             content += `Phòng: ${item.roomName}<br>`;
@@ -182,7 +180,7 @@ function loadSchedule() {
                             cell.innerHTML = '';
                         }
                     } else {
-                        const cells = rows[3].querySelectorAll('td');
+                        const cells = rows[2].querySelectorAll('td');
                         if (cells.length > columnIndex) {
                             const cell = cells[columnIndex];
                             cell.innerHTML = '';
