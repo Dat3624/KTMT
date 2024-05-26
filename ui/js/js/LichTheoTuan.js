@@ -147,7 +147,7 @@ function loadSchedule() {
                             cell.innerHTML = content;
                         }
                     } else {
-                        const cells = rows[3].querySelectorAll('td');
+                        const cells = rows[2].querySelectorAll('td');
                         if (cells.length > columnIndex) {
                             const cell = cells[columnIndex];
 let content = `<div class = "content color-lichhoc text-left"><b>${item.nameCourse}</b><br>`;
